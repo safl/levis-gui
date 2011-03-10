@@ -1,0 +1,42 @@
+{% extends "base.fieldset.html" %}
+{% block fieldset %}
+
+{% if is_paginated %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">&lt;&lt; Previous</a>
+            {% else %}
+            &lt;&lt; Previous
+            {% endif %}
+            |
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next &gt;&gt;</a>
+            {% else %}
+            Next &gt;&gt;
+            {% endif %}
+            
+            <span class="current">
+                Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+            </span>
+            
+        </span>
+    </div>
+{% endif %}
+
+<table>
+<thead>
+    <th>Name</th>
+    <th>Description</th>
+</thead>
+<tbody>
+{% for organization in object_list %}
+<tr class="{% cycle 'odd' 'even' %}">
+    <td><a href="details/{{ organization.id }}">{{ organization.name }}</a></td>
+    <td>{{ organization.description }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,60 @@
+[
+  {
+    "model": "helpdesk.state",
+    "pk": 1,
+    "fields": {
+      "name": "new",
+      "description": "Newly created ticket, no manual interaction."
+    }
+  },
+  {
+    "model": "helpdesk.state",
+    "pk": 2,
+    "fields": {
+      "name": "open",
+      "description": "Ticket is open and has been manually manipulated."
+    }
+  },
+  {
+    "model": "helpdesk.state",
+    "pk": 3,
+    "fields": {
+      "name": "closed",
+      "description": "Ticket is over and done with."
+    }
+  },
+  
+  {
+    "model": "helpdesk.priority",
+    "pk": 1,
+    "fields": {
+      "name": "low",
+      "description": "Less important than other tickets."
+    }
+  },
+  {
+    "model": "helpdesk.priority",
+    "pk": 2,
+    "fields": {
+      "name": "normal",
+      "description": "Regular ticket."
+    }
+  },
+  {
+    "model": "helpdesk.priority",
+    "pk": 3,
+    "fields": {
+      "name": "high",
+      "description": "More important than other tickets."
+    }
+  },
+  
+  {
+    "model": "helpdesk.queue",
+    "pk": 1,
+    "fields": {
+      "name": "default",
+      "description": "Default query."
+    }
+  }
+]

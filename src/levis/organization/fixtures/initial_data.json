@@ -1,0 +1,10 @@
+[
+  {
+    "model": "organization.organization",
+    "pk": 1,
+    "fields": {
+      "name": "Lost And Found",
+      "description": "Unidentified data introduced to Levis is associated with special-case customer."
+    }
+  }
+]

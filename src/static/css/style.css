@@ -1,0 +1,252 @@
+* {
+	font-family: Verdana, Helvetica, Arial;
+	font-size: 12px;
+	color: black;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background: white url('/static/img/back.png') repeat 0 0 fixed;
+}
+
+a {
+	color: darkblue;
+	text-decoration: none;
+}
+a:hover {	text-decoration: underline;	}
+
+img { border: none; }
+
+hr {
+	border: none;
+	border-top: 1px solid lightgray;
+}
+
+.toolbar {
+    background-color: rgb(0,105,140);      
+	
+    padding: 12px;
+    padding-left: 7px;
+	
+	border: 0;
+	border-bottom: 1px solid #004D5A;
+}
+
+.toolbar a {
+	
+	color: rgb(230, 240, 240);
+	font-size: 13px;
+	font-weight: bold;	
+	text-decoration: none;
+	
+	border:	1px solid rgb(0,77,90);
+	border-radius:			4px;
+	-moz-border-radius:		4px;
+	-webkit-border-radius:	4px;
+	
+	background-color: rgb(0, 80, 95);
+	background-repeat: no-repeat;
+	background-position: 5px 50%;
+	
+	padding: 3px 8px 3px 24px;
+}
+.toolbar a:hover {
+	color: white;
+	background-color: rgb(0,69,82);
+}
+
+.submenu {
+	float: left;
+	clear: left;
+	width:200px;
+	
+	margin-top: 0;
+	margin-right: 10px;
+	padding:8px 1em;
+	
+	background-color: rgb(77,136,150);
+    font-size: 11px;
+	
+	border: 0;
+	border-bottom-right-radius:			8px;
+	-moz-border-radius-bottomright:		8px;
+	-webkit-border-bottom-right-radius: 8px;
+}
+
+.submenu p a {
+	display:block; 
+	color:white; 
+	background-color:rgb(7,92,120); 
+	background-position:5px;
+	padding:4px; 
+	
+	margin-bottom:2px; 
+	padding-left: 25px; 
+    font-size: 11px;
+	
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+.submenu p a:hover {
+	text-decoration: none;
+	background-color:rgb(0,77,80);	
+}
+
+.submenu p .selected { 
+	font-weight: bold; 
+	background: url('/static/img/icons/bullet_star.png') no-repeat scroll 2px 50%;
+	background-color:rgb(0,77,90);
+}
+
+.submenu input {
+	display: block;
+	width: 98.5%;
+	background: white url('/static/img/icons/magnifier.png') no-repeat 100% 0%;
+}
+.submenu input:focus {
+	border-color: white;
+}
+
+.submenu select {
+	max-width: 100%;
+}
+
+.submenu .addbutton {
+	background-color: rgb(40,109,140);
+	padding-right: 25px;
+	text-align: right;
+}
+
+.content {
+	padding: 10px;
+}
+
+.footer {
+	color: rgb(230,240,240);
+	text-align: right;
+	background-color: rgb(0,105,140);  
+    border-top: 1px solid #004D5A;
+	bottom: 0;
+	padding: 4px 8px 4px 0;
+}
+
+fieldset {
+	padding: 8px;
+	border: 1px solid gray;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	background-color: rgb(242,242,242);
+}
+
+fieldset legend {	
+	font-weight: bold;
+	padding: 4px 24px;
+	
+	background: rgb(236,236,236) url('/static/img/icons/bullet_black.png') no-repeat 4px 50%;
+	
+	border: 1px solid gray;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+fieldset legend a {	
+	background: no-repeat 4px 50%;
+	font-weight: bold;
+	background: rgb(236,236,236);
+}
+
+
+h1 {
+	margin: 0 0 10px 0;
+	padding: 4px 10px;
+	
+	background-color: rgb(222,222,222);
+	text-align: center;
+	font-size: 13px;
+	
+	border: 1px solid gray;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+table {
+	width: 100%;
+	
+	padding: 3px;
+	padding-top: 1px;
+	
+	border-spacing: 0 2px;
+	border: 1px solid #dedede;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+
+}
+
+table thead tr th {
+	text-align: left;
+	font-weight: normal;
+	
+	background-color: #dedede;
+	
+	padding: 3px 6px 3px 6px;
+	
+	border: 1px solid #bdbdbd;
+	border-left: 0;	
+}
+
+table thead tr th.left {
+	border-left: 1px solid #bdbdbd;
+}
+
+table tbody tr td {
+	background-color: #ececec;	
+	
+	padding: 3px 6px 3px 6px;
+	
+	border-top: 1px solid #dedede;
+	border-right: 1px solid #dedede;
+	border-bottom: 1px solid #dedede;	
+}
+
+table tbody tr td.left {
+	padding-left: 20px;
+	border-left: 1px solid #dedede;
+	
+	-moz-border-radius-bottomleft:4px;	
+	-moz-border-radius-topleft:4px;
+}
+
+table tfoot tr td {
+	font-weight: bold;
+	padding: 3px 6px;
+}
+
+table tfoot tr td.left {
+	font-weight: bold;
+	padding:3px 6px 3px 22px;
+}
+
+/* ZEBRA COLORING OF ROWS */
+.even td {}
+.odd td {	background-color: #f3f3f3;	}
+
+/* Priority */
+.verylow {	background-color: #CCFFCC;	}
+.low {		background-color: #CCFFCC;	}
+.normal {	background-color: #FFFF66;	}
+.high {		background-color: #FF9966;	}
+.veryhigh {	background-color: #FF0033;	}
+
+/* Severity */
+.debug {	background-color: #CCFFCC;	}
+.info {		background-color: #CCFFCC;	}
+.warn {		background-color: #FFFF66;	}
+.error {	background-color: #FF9966;	}
+.critical {	background-color: #FF0033;	}

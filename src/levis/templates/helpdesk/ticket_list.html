@@ -1,0 +1,54 @@
+{% extends "base.fieldset.html" %}
+{% block fieldset %}
+
+{% if is_paginated %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">&lt;&lt; Previous</a>
+        {% else %}
+        &lt;&lt; Previous
+        {% endif %}
+        |
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next &gt;&gt;</a>
+        {% else %}
+        Next &gt;&gt;
+        {% endif %}
+        
+        <span class="current">
+            Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+        </span>
+        
+    </span>
+</div>
+{% endif %}
+
+<table>
+<thead>
+    <th>Number</th>
+    <th>Title</th>
+    <th>Owner</th>
+    <th>Queue</th>
+    <th>State</th>
+    <th>Priority</th>
+    <th>Org</th>
+    <th>Age</th>
+</thead>
+<tbody>
+{% for ticket in object_list %}
+<tr class="{% cycle 'odd' 'even' %}">
+    <td><a href="details/{{ organization.id }}">{{ ticket.number }}</a></td>
+    <td>{{ ticket.title }}</td>
+    <td>{{ ticket.owner }}</td>
+    <td>{{ ticket.queue }}</td>
+    <td>{{ ticket.state }}</td>
+    <td>{{ ticket.priority }}</td>
+    <td>?</td>
+    <td>{{ ticket.created }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

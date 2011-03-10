@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Organization(models.Model):
     """
     Abstract organizational entity.
@@ -29,7 +28,7 @@ class Human(models.Model):
     surname     = models.CharField(max_length=255)
     email       = models.CharField(max_length=255)
     phone       = models.CharField(max_length=255)    
-    comments    = models.CharField(max_length=255)    
+    comments    = models.CharField(max_length=255)
     
     organization = models.ManyToManyField(Organization)
     

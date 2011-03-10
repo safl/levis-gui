@@ -10,6 +10,9 @@ class State(models.Model):
     def __unicode__(self):
         return self.name
     
+    class Meta:
+        ordering = ["-name"]
+    
 class Priority(models.Model):
     """
     Indication of how "urgent" a ticket is:
@@ -22,6 +25,9 @@ class Priority(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        ordering = ["-name"]
 
 class Queue(models.Model):
     
@@ -30,6 +36,9 @@ class Queue(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        ordering = ["-name"]
 
 class Ticket(models.Model):
     
@@ -46,6 +55,9 @@ class Ticket(models.Model):
     
     def __unicode__(self):
         return str(self.number)
+        
+    class Meta:
+        ordering = ["-number"]
 
 class Article(models.Model):
     
@@ -65,6 +77,9 @@ class Salutation(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        ordering = ["-name"]
 
 class Signature(models.Model):
     
@@ -74,6 +89,9 @@ class Signature(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        ordering = ["-name"]
 
 class Response(models.Model):
     
@@ -82,3 +100,6 @@ class Response(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        ordering = ["-name"]

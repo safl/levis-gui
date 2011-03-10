@@ -87,13 +87,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    # Uncomment the next line to enable the admin:
     'django.contrib.admin',
+    
+    'accounting',    
     'dashboard',
     'hact',
+    'helpdesk',
     'monitoring',
     'organization',
-    'helpdesk'
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'reports',
+    'scheduling'
 )

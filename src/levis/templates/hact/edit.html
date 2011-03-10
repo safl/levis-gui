@@ -1,0 +1,14 @@
+{% extends "base.fieldset.html" %}
+{% block fieldset %}
+
+<form action="" method="POST">
+{% csrf_token %}
+
+  <input type="input" name="name" value="{{ node.name }}" />
+  <input type="input" name="title" value="{{ node.title }}" />
+  <textarea name="content">{{ node.content }}</textarea>
+  
+<input type="submit" value="Save Changes" />
+</form>
+
+{% endblock %}

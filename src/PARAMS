@@ -1,0 +1,8 @@
+# Mail
+
+## Sending
+ - SMTP parameters: host, port, encryption, username/password
+
+## Receiving
+ - pop-account(s)
+ - imap-account(s)

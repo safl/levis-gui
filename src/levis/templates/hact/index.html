@@ -1,0 +1,31 @@
+{% extends "base.fieldset.html" %}
+{% block fieldset %}
+<div class="meta" style="text-align: right; color: gray; font-size: 0.7em;">
+Updated: {{ node.date }}
+</div>
+{% autoescape off %}
+{% if node.title %}
+<h1>{{ node.title }}</h1>
+{% endif %}
+{{ node.rendered }}
+{% endautoescape %}
+
+{% if node.is_dir %}
+<table>
+{% for n in node_list %}
+  <tr>
+    <td style="width: 90%;"><a href="/{{ n.name }}" title="{{ n.title }}">/{{ n.name }}</a></td>
+    
+    {% if user.is_authenticated %}
+    <td nowrap><a href="/{{ n.name }}/edit">edit</a></td>
+    {% endif %}
+    <td nowrap>{{ n.date }}</td>
+  </tr>
+{% empty %}
+  <tr>
+    <td>No nodes in this name-space.</td>
+  </tr>
+{% endfor %}
+</table>
+{% endif %}
+{% endblock %}

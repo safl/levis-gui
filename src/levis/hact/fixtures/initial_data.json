@@ -1,0 +1,14 @@
+[
+  {
+    "model": "hact.node",
+    "pk": 1,
+    "fields": {
+      "name": "",
+      "title": "Root node.",
+      "content": "Nothing",
+      "rendered": "Nothing",
+      "is_dir": 0,
+      "date": "2011-01-01 00:00:00"
+    }
+  }
+]

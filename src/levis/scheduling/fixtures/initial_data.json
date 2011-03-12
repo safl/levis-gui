@@ -1,0 +1,101 @@
+[
+    {
+        "model": "scheduling.frequency",
+        "pk": 1,
+        "fields": {
+            "name": "SINGULAR",
+            "description": "Occurs once."
+        }
+    },
+    {
+        "model": "scheduling.frequency",
+        "pk": 2,
+        "fields": {
+            "name": "DAILY",
+            "description": "Every day."
+        }
+    },
+    {
+        "model": "scheduling.frequency",
+        "pk": 3,
+        "fields": {
+            "name": "WEEKLY",
+            "description": "Weekly by weekday."
+        }
+    },
+    {
+        "model": "scheduling.frequency",
+        "pk": 4,
+        "fields": {
+            "name": "MONTHLY_BY_DOW",
+            "description": "Monthly by day in the week."
+        }
+    },
+    {
+        "model": "scheduling.frequency",
+        "pk": 5,
+        "fields": {
+            "name": "MONTHLY_BY_DOM",
+            "description": "Monthly by day in the month."
+        }
+    },
+    
+    {
+        "model": "scheduling.type",
+        "pk": 1,
+        "fields": {
+            "name": "Working",
+            "description": "Doing her thing."
+        }
+    },
+    {
+        "model": "scheduling.type",
+        "pk": 2,
+        "fields": {
+            "name": "Leave",
+            "description": "On leave for unspecified reasons."
+        }
+    },
+    {
+        "model": "scheduling.type",
+        "pk": 3,
+        "fields": {
+            "name": "Vacation",
+            "description": "Away on vacation."
+        }
+    },
+
+    {
+        "model": "scheduling.event",
+        "pk": null,
+        "fields": {
+            "type": 1,
+            "user": 1,
+            "description": "Working",
+            "date_start": "2000-01-01",
+            "date_end": null,
+            "time_start": "09:00:00",
+            "time_end": "17:00:00",
+            "frequency": 3,
+            "interval": 1,
+            "mon": 1, "tue": 1, "wed": 1, "thu": 1, "fri": 1, "sat": 0, "sun": 0
+        }
+    },
+    {
+        "model": "scheduling.event",
+        "pk": null,
+        "fields": {
+            "type": 3,
+            "user": 1,
+            "description": "Weekend",
+            "date_start": "2000-01-01",
+            "date_end": null,
+            "time_start": "09:00:00",
+            "time_end": "17:00:00",
+            "frequency": 3,
+            "interval": 1,
+            "mon": 0, "tue": 0, "wed": 0, "thu": 0, "fri": 0, "sat": 1, "sun": 1
+        }
+    }
+    
+]

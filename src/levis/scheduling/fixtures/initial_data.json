@@ -64,18 +64,49 @@
             "description": "Away on vacation."
         }
     },
-
     {
         "model": "scheduling.event",
         "pk": null,
         "fields": {
             "type": 1,
             "user": 1,
-            "description": "Working",
+            "description": "Wake Up - Every Day",
+            "date_start": "2000-01-01",
+            "date_end": null,
+            "time_start": "07:00:00",
+            "time_end": "08:00:00",
+            "frequency": 2,
+            "interval": 1,
+            "mon": 1, "tue": 1, "wed": 1, "thu": 1, "fri": 1, "sat": 1, "sun": 1
+        }
+    },
+    {
+        "model": "scheduling.event",
+        "pk": null,
+        "fields": {
+            "type": 1,
+            "user": 1,
+            "description": "Feed the fish - Every second day.",
+            "date_start": "2000-01-01",
+            "date_end": null,
+            "time_start": "08:00:00",
+            "time_end": "09:00:00",
+            "frequency": 2,
+            "interval": 2,
+            "mon": 1, "tue": 1, "wed": 1, "thu": 1, "fri": 1, "sat": 1, "sun": 1
+        }
+    },
+    {
+        "model": "scheduling.event",
+        "pk": null,
+        "fields": {
+            "type": 1,
+            "user": 1,
+            "description": "Go to work - Every workday",
             "date_start": "2000-01-01",
             "date_end": null,
             "time_start": "09:00:00",
-            "time_end": "17:00:00",
+            "time_end": "11:00:00",
             "frequency": 3,
             "interval": 1,
             "mon": 1, "tue": 1, "wed": 1, "thu": 1, "fri": 1, "sat": 0, "sun": 0
@@ -87,13 +118,29 @@
         "fields": {
             "type": 3,
             "user": 1,
-            "description": "Weekend",
+            "description": "Sleep More - Every Weekend",
             "date_start": "2000-01-01",
             "date_end": null,
-            "time_start": "09:00:00",
-            "time_end": "17:00:00",
+            "time_start": "11:00:00",
+            "time_end": "12:00:00",
             "frequency": 3,
             "interval": 1,
+            "mon": 0, "tue": 0, "wed": 0, "thu": 0, "fri": 0, "sat": 1, "sun": 1
+        }
+    },
+    {
+        "model": "scheduling.event",
+        "pk": null,
+        "fields": {
+            "type": 3,
+            "user": 1,
+            "description": "Jazz Ballet - Every Second Weekend",
+            "date_start": "2000-01-01",
+            "date_end": null,
+            "time_start": "12:00:00",
+            "time_end": "13:00:00",
+            "frequency": 3,
+            "interval": 2,
             "mon": 0, "tue": 0, "wed": 0, "thu": 0, "fri": 0, "sat": 1, "sun": 1
         }
     }

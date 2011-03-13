@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
+from django.contrib.auth import authenticate, login
 
 def index(request):
     
@@ -9,3 +10,9 @@ def index(request):
             'err': None
         }
     )
+
+def login(request):
+    pass
+
+def logout(request):
+    pass

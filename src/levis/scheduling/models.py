@@ -34,9 +34,6 @@ class Event(models.Model):
     
     SINGULAR - Occurs only once, einmal ist keinmal...
     
-        DAYS:
-            Set to the day defined date_start
-            
         INTERVAL:
             Ignored / null.
     

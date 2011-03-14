@@ -54,15 +54,7 @@ class Event(models.Model):
             - 1: Every week
             - 2: Every second week
             - 3: Every third week
-            
-    MONTHLY_BY_DOM - Occurs every month on a specific day/date in the month:
-        
-        DAYS:
-            Ignored.
-        
-        INTERVAL:
-            - 1-31: Day of the month
-        
+
     MONTHY_BY_DOW - Occurs every month on a specific weekday:
         
         DAYS:
@@ -73,6 +65,14 @@ class Event(models.Model):
             - 2: Second 'Wednesday' in every month.
             - 3: Third 'Wednesday' in every month.
             - 4: Last 'Wednesday' in every month.
+
+    MONTHLY_BY_DOM - Occurs every month on a specific day/date in the month:
+        
+        DAYS:
+            Ignored.
+        
+        INTERVAL:
+            - 1-31: Day of the month
     
     """
     

@@ -143,6 +143,22 @@
             "interval": 2,
             "mon": 0, "tue": 0, "wed": 0, "thu": 0, "fri": 0, "sat": 1, "sun": 1
         }
+    },
+    {
+        "model": "scheduling.event",
+        "pk": null,
+        "fields": {
+            "type": 3,
+            "user": 1,
+            "description": "Pay Bills - Every Month on the 3rd",
+            "date_start": "2000-01-01",
+            "date_end": null,
+            "time_start": "02:00:00",
+            "time_end": "03:00:00",
+            "frequency": 5,
+            "interval": 3,
+            "mon": 0, "tue": 0, "wed": 0, "thu": 0, "fri": 0, "sat": 0, "sun": 0
+        }
     }
     
 ]

@@ -95,7 +95,8 @@ def day(request, date=None):
             'events': occurence(events, date, date),
             'occurence': None,
             'title': 'Scheduling..',
-            'err': None
+            'err': None,
+            'submenu': ['Day', 'Week', 'Month','My Day View']
         }
     )
     

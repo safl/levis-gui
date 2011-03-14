@@ -20,7 +20,15 @@ weekday_string = {
         6: 'Sunday'
     }
 
-def occurence(events, start, end):
+def occurence(start, end):
+    
+    q = [
+        Q( date_start__lte = start, date_end__gte = end ) |
+        Q( date_start__lte = start, date_end__isnull = True ),
+    ]
+    
+    events = Event.objects.filter( *q )
+    
     occurence = []
     
     date    = start
@@ -33,10 +41,14 @@ def occurence(events, start, end):
         
         for event in events:
             
-            offset  = date - event.date_start
+            offset          = date - event.date_start            
+            offset_weeks    = int(float((date - (event.date_start - datetime.timedelta(days=event.date_start.weekday()))).days) / 7)
             
-            first_week_start = (event.date_start - datetime.timedelta(days=event.date_start.weekday()))
-            offset_weeks = int(float((date - first_week_start).days) / 7)
+            som = datetime.date(    # Start of the month
+                date.year,
+                date.month,
+                1
+            )
             
             dow = { # TODO: this is bad... find a better way of mapping to weekdays
                 0: event.mon,
@@ -96,28 +108,25 @@ def day(request, date=None):
     else:
         date = datetime.date.today()
     
-    start   = date-datetime.timedelta(days=7)
+    start   = date
     end     = date
+    prev    = date-datetime.timedelta(days=1)
+    next    = date+datetime.timedelta(days=1)
     
-    weekday = date.weekday()
-    q = [
-        Q( date_start__lte = start, date_end__gte = end ) |
-        Q( date_start__lte = start, date_end__isnull = True ),
-    ]
-    
-    events = Event.objects.filter( *q )
+    weekday = date.weekday()    
     
     return render_to_response(
         'scheduling/day.html', {
             'weekday': weekday_string[weekday],
+            'weeknumber': date.isocalendar()[1],
             'date': str(date),
-            'next': str(date+datetime.timedelta(days=1)),
-            'prev': str(date-datetime.timedelta(days=1)),
-            'events': occurence(events, start, end),
+            'next': str(next),
+            'prev': str(prev),
+            'events': occurence(start, end),
             'occurence': None,
             'title': 'Scheduling..',
             'err': None,
-            'submenu': ['Day', 'Week', 'Month','My Day View']
+            'submenu': ['Day', 'Week', 'Month', 'Day Vertical', 'Week Vertical']
         }
     )
     

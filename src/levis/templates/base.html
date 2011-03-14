@@ -4,6 +4,26 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="/static/css/icons.css" />
 <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/cupertino/jquery-ui-1.8.10.custom.css" />
+<script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui-1.8.10.custom.min.js"></script>
+
+<script type="text/javascript">
+	$(function(){
+        
+        $('#datepicker').datepicker({
+            inline: true,
+            changeMonth: true,
+			changeYear: true,
+            showOtherMonths: true,
+			selectOtherMonths: true,
+            showWeek: true,
+			firstDay: 1
+        });
+
+    })
+</script>
+
 <title>{% block title %}Levis{% endblock %}</title>
 </head> 
 <body>
@@ -21,7 +41,7 @@
     <a href="/auth/logout/" class="icon logout" style="float: right; top: 0; margin-top: -4px;">Logout</a>
 </div>
 <div class="container">
-    
+    <div id="datepicker"></div>
     {% if submenu %}
     <div class="submenu">
     <p>
@@ -34,7 +54,7 @@
     </div>
     {% endif %}
     
-    <div class="content">
+    <div class="content">    
     {% block content %}{% endblock %}    
     </div>
 </div>

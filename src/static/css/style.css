@@ -175,7 +175,7 @@ h1 {
 	border-radius: 4px;
 }
 
-table {
+table.levis_listing {
 	width: 100%;
 	
 	padding: 3px;
@@ -189,7 +189,7 @@ table {
 
 }
 
-table thead tr th {
+table.levis_listing thead tr th {
 	text-align: left;
 	font-weight: normal;
 	
@@ -201,11 +201,11 @@ table thead tr th {
 	border-left: 0;	
 }
 
-table thead tr th.left {
+table.levis_listing thead tr th.left {
 	border-left: 1px solid #bdbdbd;
 }
 
-table tbody tr td {
+table.levis_listing tbody tr td {
 	background-color: #ececec;	
 	
 	padding: 3px 6px 3px 6px;
@@ -215,7 +215,7 @@ table tbody tr td {
 	border-bottom: 1px solid #dedede;	
 }
 
-table tbody tr td.left {
+table.levis_listing tbody tr td.left {
 	padding-left: 20px;
 	border-left: 1px solid #dedede;
 	
@@ -223,14 +223,114 @@ table tbody tr td.left {
 	-moz-border-radius-topleft:4px;
 }
 
-table tfoot tr td {
+table.levis_listing tfoot tr td {
 	font-weight: bold;
 	padding: 3px 6px;
 }
 
-table tfoot tr td.left {
+table.levis_listing tfoot tr td.left {
 	font-weight: bold;
 	padding:3px 6px 3px 22px;
+}
+
+table.schedule {
+	border-collapse: separate;
+	border-spacing: 0 0;
+	border: 1px solid gray;
+	
+	width: 100%;
+	
+	padding: 0px;
+	
+	background-color: white;
+
+}
+
+table.schedule tbody {
+	display: table-row-group;
+	vertical-align: middle;
+	border-color: inherit;
+}
+
+table.schedule td {
+	vertical-align: top;
+}
+
+table.schedule td.hours {
+	width: 60px;
+	background-color: #F2F5F7;	
+	padding: 1px 0 1px 0;
+}
+table.schedule td.hours div {
+	height: 41px;
+	text-align: right;
+	padding-right: 1px;
+	border-bottom: 1px solid gray;
+}
+table.schedule td.hours div div {
+	height: 41px;	
+}
+table.schedule td div.event_spacer {
+	height: 1008px;
+	margin-bottom: -1008px;
+	position: relative;
+}
+table.schedule td div.event_wrapper {
+	height: 1008px;
+	margin-bottom: -1008px;
+	position: relative;
+	border-left: 1px solid lightgray;
+}
+
+table.schedule td div.event_container {
+	position: absolute;	
+	overflow: hidden;
+	width: 100%;
+}
+
+table.schedule td div.event_container dl {	
+	background-color: #32C8E6;
+	padding: 0 0 1px;
+	margin: 0;
+	
+	border: 1px solid #3096e5;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;		
+}
+
+table.schedule td div.event_container dl dt {
+	background-color: #3096e5;
+	padding: 0 1px;
+}
+
+table.schedule td div.event_container dl dd {
+	padding: 0 1px;
+	margin: 0;
+}
+
+.event_spanningwrapper {
+	position: relative;
+	top: 1px;
+	margin-left: 1px;
+}
+
+.event_hourmarker {
+	position: absolute;
+	width: 100%;
+}
+
+.event_markercell {
+	height: 42px;
+}
+
+.event_dualmarker {
+	height: 20px;
+	margin-bottom: 20px;
+	
+	border-bottom: 1px dotted #DDD;
+	border-top: 1px solid #DDD;
+	font-size: 1px;
 }
 
 /* ZEBRA COLORING OF ROWS */

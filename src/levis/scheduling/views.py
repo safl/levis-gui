@@ -115,10 +115,7 @@ def day(request, date=None):
     next    = date+datetime.timedelta(days=1)
     
     weekday = date.weekday()    
-    
-    #slots = ((time/60, time%60) for time in xrange(0, 1440, 30))
-    #slots = ((time/60, time%60) for time in xrange(0, 23, 30))
-    
+        
     return render_to_response(
         'scheduling/day.html', {
             'weekday': weekday_string[weekday],
@@ -128,7 +125,6 @@ def day(request, date=None):
             'next': str(next),
             'prev': str(prev),
             'events': occurence(start, end),
-            #'slots': slots,
             'slots': xrange(0, 24),
             'title': 'Scheduling..',
             'err': None,

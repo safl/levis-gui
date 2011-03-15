@@ -4,25 +4,76 @@
 <a href="{{today}}">today</a> <a href="{{ prev }}">prev</a> <a href="{{ next }}">next</a> {{ weekday }} {{ date }}
 
 <div>
-<table>
-<tr>
-    <td style="vertical-align: top; width: 60px;">
-    {% for hour in slots %}
-    <div style="height: 42px; text-align: right;">{{hour}}</div>
-    {% endfor %}
+<table class="schedule">
+<tr height="1">
+    <td class="hours"></td>
+    <td colspan="2">
+        <div class="event_spanningwrapper">            
+            <div class="event_hourmarker">
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+                <div class="event_markercell"><div class="event_dualmarker"></div></div>
+            </div>            
+        </div>
     </td>
-    <td style="vertical-align: top;">
-        <div style="height: 1008px; margin-bottom: -1008px; position: static;"></div>
-        <div style="height: 1008px; margin-bottom: -1008px; position: relative;">
+</tr>
+<tr>
+    <td class="hours">
+        {% for hour in slots %}
+        <div><div>{{hour}}</div></div>
+        {% endfor %}
+    </td>
+    <td>
+        <div class="event_spacer"></div>
+        <div class="event_wrapper">
             {% for event in events %}            
-            <div style="position: absolute; top: {{event.top}}px; overflow: hidden; width: 100%;">
-                <dl style="background-color: red; padding: 0 0 1px; margin: 0;">
-                <dt style="padding: 0 1px;">
-                    {{ event.time_start }}:{{ event.time_end }}
-                </dt>
-                <dd style="padding: 0 1px; margin: 0;">
-                    {{ event.description }}
-                <dd>
+            <div class="event_container" style="top: {{event.top}}px;">
+                <dl>
+                    <dt>
+                        {{ event.time_start }}:{{ event.time_end }}
+                    </dt>
+                    <dd>
+                        {{ event.description }}
+                    <dd>
+                </dl>
+            </div>
+            {% endfor %}
+                
+        </div>
+    </td>
+    <td>
+        <div class="event_spacer"></div>
+        <div class="event_wrapper">
+            {% for event in events %}            
+            <div class="event_container" style="top: {{event.top}}px;">
+                <dl>
+                    <dt>
+                        {{ event.time_start }}:{{ event.time_end }}
+                    </dt>
+                    <dd>
+                        {{ event.description }}
+                    <dd>
                 </dl>
             </div>
             {% endfor %}

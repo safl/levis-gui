@@ -59,7 +59,7 @@ def occurence(start, end):
                 5: event.sat,
                 6: event.sun
             }
-            
+            event.top = event.time_start.hour * 42
             if event.frequency.name == "SINGULAR":
                 
                 occurence.append(copy.copy(event))
@@ -103,10 +103,11 @@ def occurence(start, end):
 
 def day(request, date=None):
     
+    today = datetime.date.today()
     if date:
         date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
     else:
-        date = datetime.date.today()
+        date = today
     
     start   = date
     end     = date
@@ -115,18 +116,23 @@ def day(request, date=None):
     
     weekday = date.weekday()    
     
+    #slots = ((time/60, time%60) for time in xrange(0, 1440, 30))
+    #slots = ((time/60, time%60) for time in xrange(0, 23, 30))
+    
     return render_to_response(
         'scheduling/day.html', {
             'weekday': weekday_string[weekday],
             'weeknumber': date.isocalendar()[1],
-            'date': str(date),
+            'today': str(today),
+            'date': date,
             'next': str(next),
             'prev': str(prev),
             'events': occurence(start, end),
-            'occurence': None,
+            #'slots': slots,
+            'slots': xrange(0, 24),
             'title': 'Scheduling..',
             'err': None,
-            'submenu': ['Day', 'Week', 'Month', 'Day Vertical', 'Week Vertical']
+            'submenu': ['Day', 'Week', 'Month', 'Day Vertical', 'Week Vertical', 'Agenda']
         }
     )
     

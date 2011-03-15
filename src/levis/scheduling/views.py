@@ -166,7 +166,7 @@ def day_vertical(request, date=None):
     
     weekday = date.weekday()
         
-    return view('week_vertical', start, end, prev, next, weekday)
+    return view('vertical', start, end, prev, next, weekday)
 
 def week(request, date=None):
     
@@ -204,7 +204,7 @@ def week_vertical(request, date=None):
     
     weekday = date.weekday()
         
-    return view('week_vertical', start, end, prev, next, weekday)
+    return view('vertical', start, end, prev, next, weekday)
     
 def month(request, date=None):
     

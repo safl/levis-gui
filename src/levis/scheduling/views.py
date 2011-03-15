@@ -29,13 +29,14 @@ def occurence(start, end):
     
     events = Event.objects.filter( *q )
     
-    occurence = []
+    occurences = []
     
     date    = start
     delta   = datetime.timedelta(days=1)
     
     while(date <= end):
         
+        occurence = []
         weekday     = date.weekday()
         weekstart   = date - datetime.timedelta(days=weekday)
         
@@ -96,10 +97,40 @@ def occurence(start, end):
                 event.date_start    = date
                 event.date_end      = date
                 occurence.append(event)
-        
+                
+        occurences.append(occurence)
         date += delta
     
-    return occurence
+    return occurences
+
+def view(view, start, end, prev, next, weekday):
+    
+    today = datetime.date.today()
+    date    = start
+    
+    day = start
+    days = []
+    while(day<=end):
+        days.append(day)
+        day+= datetime.timedelta(days=1)
+    
+    return render_to_response(
+        'scheduling/%s.html' % view, {
+            'date': date,
+            'days': days,
+            'today': today,
+            'start': start,
+            'end': end,
+            'next': next,
+            'prev': prev,
+            'events': occurence(start, end),
+            'slots': ("%02d:00" % slot for slot in xrange(0, 24)),
+            'title': 'Scheduling..',
+            'err': None,
+            'appname': 'scheduling',
+            'submenu': [('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('day_vertical', 'Day Vertical'), ('week_vertical', 'Week Vertical'), ('agenda', 'Agenda')]
+        }
+    )
 
 def day(request, date=None):
     
@@ -110,51 +141,103 @@ def day(request, date=None):
         date = today
     
     start   = date
-    end     = date
+    end     = date    
+    
     prev    = date-datetime.timedelta(days=1)
     next    = date+datetime.timedelta(days=1)
     
-    weekday = date.weekday()    
+    weekday = date.weekday()
         
-    return render_to_response(
-        'scheduling/day.html', {
-            'weekday': weekday_string[weekday],
-            'weeknumber': date.isocalendar()[1],
-            'today': str(today),
-            'date': date,
-            'next': str(next),
-            'prev': str(prev),
-            'events': occurence(start, end),
-            'slots': xrange(0, 24),
-            'title': 'Scheduling..',
-            'err': None,
-            'submenu': ['Day', 'Week', 'Month', 'Day Vertical', 'Week Vertical', 'Agenda']
-        }
-    )
+    return view('day', start, end, prev, next, weekday)
     
-def day_vertical(request):
-    return render_to_response(
-        'scheduling/day_vertical.html', {
-            'events': Event.objects.all(),
-            'msg': 'Well, hello there...',
-            'err': None
-        }
-    )
+def day_vertical(request, date=None):
+    
+    today = datetime.date.today()
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    else:
+        date = today
+    
+    start   = date
+    end     = date    
+    
+    prev    = date-datetime.timedelta(days=1)
+    next    = date+datetime.timedelta(days=1)
+    
+    weekday = date.weekday()
+        
+    return view('week_vertical', start, end, prev, next, weekday)
 
-def week(request):
-    return render_to_response(
-        'scheduling/week.html', {
-            'events': Event.objects.all(),
-            'msg': 'Well, hello there...',
-            'err': None
-        }
-    )
+def week(request, date=None):
     
-def month(request):
-    return render_to_response(
-        'scheduling/month.html', {
-            'events': Event.objects.all(),
-            'msg': 'Well, hello there...',
-            'err': None
-        }
-    )
+    today = datetime.date.today()
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    else:
+        date = today
+    
+    start   = date
+    end     = date    
+    
+    prev    = date-datetime.timedelta(days=1)
+    next    = date+datetime.timedelta(days=1)
+    
+    weekday = date.weekday()
+    
+    return view('week', start, end, prev, next, weekday)
+    
+def week_vertical(request, date=None):
+    
+    today = datetime.date.today()
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    else:
+        date = today
+    
+    date = date-datetime.timedelta(days=date.weekday())
+    
+    start   = date
+    end     = date+datetime.timedelta(days=6)    
+    
+    prev    = date-datetime.timedelta(days=6)
+    next    = date+datetime.timedelta(days=7)
+    
+    weekday = date.weekday()
+        
+    return view('week_vertical', start, end, prev, next, weekday)
+    
+def month(request, date=None):
+    
+    today = datetime.date.today()
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    else:
+        date = today
+    
+    start   = date
+    end     = date    
+    
+    prev    = date-datetime.timedelta(days=1)
+    next    = date+datetime.timedelta(days=1)
+    
+    weekday = date.weekday()
+        
+    return view('month', start, end, prev, next, weekday)
+
+def agenda(request, date=None):
+    
+    today = datetime.date.today()
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    else:
+        date = today
+    
+    start   = date
+    end     = date    
+    
+    prev    = date-datetime.timedelta(days=1)
+    next    = date+datetime.timedelta(days=1)
+    
+    weekday = date.weekday()
+        
+    return view('agenda', start, end, prev, next, weekday)

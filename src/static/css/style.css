@@ -252,6 +252,10 @@ table.schedule tbody {
 	border-color: inherit;
 }
 
+table.schedule tr.days td {
+	text-align: center;
+}
+
 table.schedule td {
 	vertical-align: top;
 }
@@ -285,7 +289,7 @@ table.schedule td div.event_wrapper {
 table.schedule td div.event_container {
 	position: absolute;	
 	overflow: hidden;
-	width: 100%;
+	width: 100%;	
 }
 
 table.schedule td div.event_container dl {	
@@ -294,6 +298,7 @@ table.schedule td div.event_container dl {
 	margin: 0;
 	
 	border: 1px solid #3096e5;
+	
 	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;		

@@ -1,6 +1,50 @@
 {% extends "base.fieldset.html" %}
 {% block fieldset %}
 
+<div>
+<a href="{{today|date:"Y-m-d"}}">today</a>
+<a href="{{ prev|date:"Y-m-d" }}">prev</a>
+<a href="{{ next|date:"Y-m-d" }}">next</a>
+{% ifnotequal start end %}
+    {% ifnotequal start.day end.day %}
+    {{ start|date:"j." }}
+    {% endifnotequal %}
+    
+    {% ifnotequal start.month end.month %}
+    {{ start|date:"M." }}
+    {% endifnotequal %}
+    
+    {% ifnotequal start.year end.year %}
+    {{ start|date:"Y." }}
+    {% endifnotequal %}
+    -
+    {{ end|date:"j. M. Y" }}
+{% else %}
+    {{ start|date:"j. M. Y" }}
+{% endifnotequal %}
+</div>
+<div>
+<table class="schedule">
+    
+{% for events_on_day in events %}
+{% for event in events_on_day %}
+{% ifchanged events_on_day %} <tr><td colspan="3" style="border-bottom: 1px solid black;"><td></tr> {% endifchanged %}
+<tr>
+    
+    {% ifchanged events_on_day %}
+    <th style="padding: 5px; vertical-align:top;{% ifequal today event.date_start %} background-color: #F9DD34;{% endifequal %}" rowspan="{{events_on_day|length}}" nowrap>
+    <a href="/{{appname}}/day_vertical/{{ event.date_start|date:"Y-m-d"}}">{{ event.date_start|date:"D. j. M." }}</a>
+    </th>
+    {% endifchanged %}
+    
+    <td style="padding: 5px;" nowrap>{{ event.time_start|time:"H:i"}} - {{ event.time_end|time:"H:i"}}</td>
+    <td style="padding: 5px; width: 100%;">{{ event.description }}</td>
+</tr>
+{% endfor %}
+{% endfor %}
+
+</table>
+</div>
 
 <script type="text/javascript">
 	$(function(){
@@ -10,11 +54,12 @@
             changeMonth: true,
 			changeYear: true,
             showOtherMonths: true,
+            showButtonPanel: true,
 			selectOtherMonths: true,
             showWeek: true,
 			firstDay: 1,
             dateFormat: 'yy-mm-dd',
-            defaultDate: '{{ date.year }}-{{ date.month }}-{{ date.day }}',
+            defaultDate: '{{ date|date:"Y-m-d" }}',
             onSelect: function(dateText, inst) {
                 window.location = dateText;
             }

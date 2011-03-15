@@ -108,8 +108,8 @@ def view(view, start, end, prev, next, weekday):
     today = datetime.date.today()
     date    = start
     
-    day = start
-    days = []
+    day     = start
+    days    = []
     while(day<=end):
         days.append(day)
         day+= datetime.timedelta(days=1)
@@ -233,7 +233,7 @@ def agenda(request, date=None):
         date = today
     
     start   = date
-    end     = date    
+    end     = date+datetime.timedelta(days=21)
     
     prev    = date-datetime.timedelta(days=1)
     next    = date+datetime.timedelta(days=1)

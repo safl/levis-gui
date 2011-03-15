@@ -254,6 +254,8 @@ table.schedule tbody {
 
 table.schedule tr.days td {
 	text-align: center;
+	background-color: darkgray;
+	padding: 3px;	
 }
 
 table.schedule td {

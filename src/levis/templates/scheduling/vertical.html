@@ -1,7 +1,10 @@
 {% extends "base.fieldset.html" %}
 {% block fieldset %}
 
-<a href="{{today|date:"Y-m-d"}}">today</a> <a href="{{ prev|date:"Y-m-d" }}">prev</a><a href="{{ next|date:"Y-m-d" }}">next</a>
+<div>
+<a href="{{today|date:"Y-m-d"}}">today</a>
+<a href="{{ prev|date:"Y-m-d" }}">prev</a>
+<a href="{{ next|date:"Y-m-d" }}">next</a>
 {% ifnotequal start end %}
     {% ifnotequal start.day end.day %}
     {{ start|date:"j." }}
@@ -19,13 +22,13 @@
 {% else %}
     {{ start|date:"j. M. Y" }}
 {% endifnotequal %}
-
+</div>
 <div>
 <table class="schedule">
 <tr class="days">
-    <td></td>
+    <td><a href="/{{appname}}/week_vertical/{{date|date:"Y-m-d"}}">Week {{date|date:"W"}}</a></td>
     {% for day in days %}
-    <td>{{day|date:"D j/n"}}</td>
+    <td><a href="/{{appname}}/day_vertical/{{day|date:"Y-m-d"}}">{{day|date:"D j/n"}}</a></td>
     {% endfor %}
 </tr>    
 <tr height="1">
@@ -75,7 +78,7 @@
             <div class="event_container" style="top: {{event.top}}px;">
                 <dl>
                     <dt>
-                        {{ event.time_start }}:{{ event.time_end }}
+                        {{ event.time_start|time:"H:i" }} - {{ event.time_end|time:"H:i" }}
                     </dt>
                     <dd>
                         {{ event.description }}

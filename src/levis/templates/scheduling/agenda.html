@@ -33,7 +33,7 @@
     
     {% ifchanged events_on_day %}
     <th style="padding: 5px; vertical-align:top;{% ifequal today event.date_start %} background-color: #F9DD34;{% endifequal %}" rowspan="{{events_on_day|length}}" nowrap>
-    <a href="/{{appname}}/day_vertical/{{ event.date_start|date:"Y-m-d"}}">{{ event.date_start|date:"D. j. M." }}</a>
+    <a href="/{{appname}}/my_day/{{ event.date_start|date:"Y-m-d"}}">{{ event.date_start|date:"D. j. M." }}</a>
     </th>
     {% endifchanged %}
     

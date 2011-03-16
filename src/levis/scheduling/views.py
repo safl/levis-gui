@@ -128,7 +128,7 @@ def view(view, start, end, prev, next, weekday):
             'title': 'Scheduling..',
             'err': None,
             'appname': 'scheduling',
-            'submenu': [('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('day_vertical', 'Day Vertical'), ('week_vertical', 'Week Vertical'), ('agenda', 'Agenda')]
+            'submenu': [('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('my_day', 'My Day'), ('my_week', 'My Week'), ('my_agenda', 'My Agenda')]
         }
     )
 
@@ -150,7 +150,7 @@ def day(request, date=None):
         
     return view('day', start, end, prev, next, weekday)
     
-def day_vertical(request, date=None):
+def my_day(request, date=None):
     
     today = datetime.date.today()
     if date:
@@ -186,7 +186,7 @@ def week(request, date=None):
     
     return view('week', start, end, prev, next, weekday)
     
-def week_vertical(request, date=None):
+def my_week(request, date=None):
     
     today = datetime.date.today()
     if date:
@@ -224,7 +224,7 @@ def month(request, date=None):
         
     return view('month', start, end, prev, next, weekday)
 
-def agenda(request, date=None):
+def my_agenda(request, date=None):
     
     today = datetime.date.today()
     if date:

@@ -26,9 +26,9 @@
 <div>
 <table class="schedule">
 <tr class="days">
-    <td><a href="/{{appname}}/week_vertical/{{date|date:"Y-m-d"}}">Week {{date|date:"W"}}</a></td>
+    <td><a href="/{{appname}}/my_week/{{date|date:"Y-m-d"}}">Week {{date|date:"W"}}</a></td>
     {% for day in days %}
-    <td><a href="/{{appname}}/day_vertical/{{day|date:"Y-m-d"}}">{{day|date:"D j/n"}}</a></td>
+    <td><a href="/{{appname}}/my_day/{{day|date:"Y-m-d"}}">{{day|date:"D j/n"}}</a></td>
     {% endfor %}
 </tr>
 <tr height="1">

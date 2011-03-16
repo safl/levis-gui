@@ -1,7 +1,77 @@
 {% extends "base.html" %}
 {% block content %}
-<fieldset>
-    <legend>Browse {{ app }}</legend>
-    {% block fieldset %}{% endblock %}
-</fieldset>
-{% endblock %}
+<div class="toolbar">
+    <a href="/dashboard/" class="gui-button">
+        <span class="gui-icon gui-icon-dashboard"></span>
+        Dashboard
+    </a>
+    <a href="/organization/" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-organization"></span>
+        Organizations
+    </a>
+    <a href="/monitoring/" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-monitoring"></span>
+        Devices
+    </a>
+    <a href="/helpdesk/" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-helpdesk"></span>
+        Helpdesk
+    </a>
+    <a href="/scheduling/" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-scheduling"></span>
+        Scheduling
+    </a>
+    <a href="/reports/" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-reports"></span>
+        Reports
+    </a>
+    <a href="/knowledge/" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-knowledge"></span>
+        Knowledge
+    </a>
+    <a href="/auth/logout/"  style="float: right;" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-logout"></span>
+        Logout
+    </a>
+
+</div>
+<div class="container">    
+    {% if submenu %}
+    <div class="submenu">
+    <p>
+    <!-- menu_item -->
+    {% for link, menu_item in submenu %}
+        {% if link == '-' %}
+    </p>
+    <p> 
+        {% else %}
+        <a href="/{{appname}}/{{link}}" class="gui-button ">
+            <span class="gui-icon gui-icon-scheduling-{{link}}"></span>
+            {{menu_item}}
+        </a>
+        {% endif %}
+    {% endfor %}
+    </p>
+    
+    <!-- datepicker -->
+    <center>
+    <div id="datepicker"></div>
+    </center>
+    
+    </div>
+    {% endif %}
+    
+    <div class="content">    
+    
+    <fieldset>
+        <legend>Browse {{ app }}</legend>
+        {% block fieldset %}{% endblock %}
+    </fieldset>
+    
+    </div>
+</div>
+
+<div class="footer">
+    Copyright 2011 - Simon A. F. Lund
+</div>
+{% endblock %} 

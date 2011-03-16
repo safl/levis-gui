@@ -1,0 +1,24 @@
+.gui-icon { width: 16px; height: 16px; background-image: url(images/sprites.png); }
+.gui-icon-accounting { background-position: 0px 0px; }
+.gui-icon-bullet-black { background-position: 16px 0px; }
+.gui-icon-bullet-blue { background-position: 32px 0px; }
+.gui-icon-bullet-green { background-position: 48px 0px; }
+.gui-icon-bullet-orange { background-position: 0px 16px; }
+.gui-icon-bullet-pink { background-position: 16px 16px; }
+.gui-icon-bullet-purple { background-position: 32px 16px; }
+.gui-icon-bullet-red { background-position: 48px 16px; }
+.gui-icon-bullet-yellow { background-position: 0px 32px; }
+.gui-icon-helpdesk { background-position: 16px 32px; }
+.gui-icon-lock-locked { background-position: 32px 32px; }
+.gui-icon-lock-unlocked { background-position: 48px 32px; }
+.gui-icon-monitoring { background-position: 0px 48px; }
+.gui-icon-nav-first { background-position: 16px 48px; }
+.gui-icon-nav-last { background-position: 32px 48px; }
+.gui-icon-nav-next { background-position: 48px 48px; }
+.gui-icon-nav-prev { background-position: 0px 64px; }
+.gui-icon-organization { background-position: 16px 64px; }
+.gui-icon-reports { background-position: 32px 64px; }
+.gui-icon-scheduling { background-position: 48px 64px; }
+.gui-icon-scheduling-day { background-position: 0px 80px; }
+.gui-icon-scheduling-month { background-position: 16px 80px; }
+.gui-icon-scheduling-week { background-position: 32px 80px; }

@@ -1,36 +1,12 @@
-{% extends "base.fieldset.html" %}
-{% block fieldset %}
-<div class="schedule_nav" style="font-weight: bold;">
-<a href="{{ today|date:"Y-m-d" }}"/>Today</a>
-<a href="{{ prev|date:"Y-m-d" }}"/>s</a>
-<a href="{{ next|date:"Y-m-d" }}"/>s</a>
+{% extends "scheduling/base.html" %}
+{% block scheduling %}
 
-{% ifnotequal start end %}
-    {% ifnotequal start.day end.day %}
-    {{ start|date:"j." }}
-    {% endifnotequal %}
-    
-    {% ifnotequal start.month end.month %}
-    {{ start|date:"M." }}
-    {% endifnotequal %}
-    
-    {% ifnotequal start.year end.year %}
-    {{ start|date:"Y." }}
-    {% endifnotequal %}
-    -
-    {{ end|date:"j. M. Y" }}
-{% else %}
-    {{ start|date:"j. M. Y" }}
-{% endifnotequal %}
-</div>
 <div>
 <table class="schedule">
-    
 {% for events_on_day in events %}
 {% for event in events_on_day %}
 {% ifchanged events_on_day %} <tr><td colspan="3" style="border-bottom: 1px solid black;"><td></tr> {% endifchanged %}
-<tr>
-    
+<tr>    
     {% ifchanged events_on_day %}
     <th style="padding: 5px; vertical-align:top;{% ifequal today event.date_start %} background-color: #F9DD34;{% endifequal %}" rowspan="{{events_on_day|length}}" nowrap>
     <a href="/{{appname}}/my_day/{{ event.date_start|date:"Y-m-d"}}">{{ event.date_start|date:"D. j. M." }}</a>

@@ -1,0 +1,49 @@
+{% extends "base.fieldset.html" %}
+{% block fieldset %}
+<div style="font-weight: bold;">
+<a href="{{ today|date:"Y-m-d" }}"><button>Today</button></a>
+<a href="{{ prev|date:"Y-m-d" }}"><span class="gui-icon gui-icon-nav-prev"></span></a>
+<a href="{{ next|date:"Y-m-d" }}"><span class="gui-icon gui-icon-nav-next"></span></a>
+{% ifnotequal start end %}
+    {% ifnotequal start.day end.day %}
+    {{ start|date:"j." }}
+    {% endifnotequal %}
+    
+    {% ifnotequal start.month end.month %}
+    {{ start|date:"M." }}
+    {% endifnotequal %}
+    
+    {% ifnotequal start.year end.year %}
+    {{ start|date:"Y." }}
+    {% endifnotequal %}
+    -
+    {{ end|date:"j. M. Y" }}
+{% else %}
+    {{ start|date:"j. M. Y" }}
+{% endifnotequal %}
+</div>
+
+{% block scheduling %}{% endblock %}
+
+<script type="text/javascript">
+	$(function(){
+        
+        $('#datepicker').datepicker({
+            inline: true,
+            changeMonth: true,
+			changeYear: true,
+            showOtherMonths: true,
+            showButtonPanel: true,
+			selectOtherMonths: true,
+            showWeek: true,
+			firstDay: 1,
+            dateFormat: 'yy-mm-dd',
+            defaultDate: '{{ date|date:"Y-m-d" }}',
+            onSelect: function(dateText, inst) {
+                window.location = dateText;
+            }
+        });
+       
+    });
+</script>
+{% endblock %}

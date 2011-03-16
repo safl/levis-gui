@@ -128,7 +128,7 @@ def view(view, start, end, prev, next, weekday):
             'title': 'Scheduling..',
             'err': None,
             'appname': 'scheduling',
-            'submenu': [('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('my_day', 'My Day'), ('my_week', 'My Week'), ('my_agenda', 'My Agenda')]
+            'submenu': [('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('-','-'), ('my_day', 'My Day'), ('my_week', 'My Week'), ('my_agenda', 'My Agenda')]
         }
     )
 

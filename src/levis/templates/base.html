@@ -4,13 +4,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <!-- <link rel="stylesheet" type="text/css" href="/static/css/icons.css" />-->
 <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
-<link rel="stylesheet" type="text/css" href="/static/css/cupertino/jquery-ui-1.8.10.custom.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/jqlevis/jquery-ui-1.8.10.custom.css" />
 <script type="text/javascript" src="/static/js/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery-ui-1.8.10.custom.min.js"></script>
 <title>{% block title %}Levis{% endblock %}</title>
 </head> 
 <body>
-    
+
+<!--    
 <div class="toolbar top">
     <a href="/dashboard/" class="icon dashboard">Dashboard</a>
     <a href="/organization/" class="icon organization">Organizations</a>
@@ -19,16 +20,55 @@
     <a href="/scheduling/" class="icon scheduling">Scheduling</a>
     <a href="/accounting/" class="icon accounting">Accounting</a>
     <a href="/reports/" class="icon reports">Reports</a>
-    <a href="/knowledge/" class="icon knowledge">Knowledge</a>
-    
+    <a href="/knowledge/" class="icon knowledge">Knowledge</a>    
     <a href="/auth/logout/" class="icon logout" style="float: right; top: 0; margin-top: -4px;">Logout</a>
+</div>
+-->
+<div class="toolbar">
+    <a href="/dashboard/" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+        <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+        <span class="ui-button-text">Dashboard</span>
+    </a>
+    <a href="/organization/" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+        <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+        <span class="ui-button-text">Organizations</span>
+    </a>
+    <a href="/monitoring/" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+        <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+        <span class="ui-button-text">Devices</span>
+    </a>
+    <a href="/helpdesk/" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+        <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+        <span class="ui-button-text">Helpdesk</span>
+    </a>
+    <a href="/scheduling/" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+        <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+        <span class="ui-button-text">Scheduling</span>
+    </a>
+    <a href="/reports/" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+        <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+        <span class="ui-button-text">Reports</span>
+    </a>
+    <a href="/knowledge/" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+        <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+        <span class="ui-button-text">Knowledge</span>
+    </a>
+    <a href="/auth/logout/"  style="float: right;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+        <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+        <span class="ui-button-text">Logout</span>
+    </a>
+
 </div>
 <div class="container">    
     {% if submenu %}
     <div class="submenu">
     <p> <!-- menu_item -->
-    {% for link, menu_item in submenu %}    
-        <a href="/{{appname}}/{{link}}">{{menu_item}}</a>    
+    {% for link, menu_item in submenu %}
+        <a href="/{{appname}}/{{link}}" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button">
+            <span class="ui-button-icon-primary ui-icon ui-icon-bullet"></span>
+            <span class="ui-button-text">{{menu_item}}</span>
+        </a>
+        <!--<a href="/{{appname}}/{{link}}">{{menu_item}}</a>  -->
     {% endfor %}
     </p>
     
@@ -49,5 +89,5 @@
     Copyright 2011 - Simon A. F. Lund
 </div>
 
-</body> 
-</html> 
+</body>
+</html>

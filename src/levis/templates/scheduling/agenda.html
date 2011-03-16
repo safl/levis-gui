@@ -1,10 +1,10 @@
 {% extends "base.fieldset.html" %}
 {% block fieldset %}
+<div class="schedule_nav" style="font-weight: bold;">
+<a href="{{ today|date:"Y-m-d" }}"/>Today</a>
+<a href="{{ prev|date:"Y-m-d" }}"/>s</a>
+<a href="{{ next|date:"Y-m-d" }}"/>s</a>
 
-<div>
-<a href="{{today|date:"Y-m-d"}}">today</a>
-<a href="{{ prev|date:"Y-m-d" }}">prev</a>
-<a href="{{ next|date:"Y-m-d" }}">next</a>
 {% ifnotequal start end %}
     {% ifnotequal start.day end.day %}
     {{ start|date:"j." }}
@@ -64,7 +64,23 @@
                 window.location = dateText;
             }
         });
-       
+    
+        $(".schedule_nav a:first" ).button({
+            icons: {
+                primary: "ui-icon-bullet"
+            }
+        }).next().button({
+            icons: {
+                primary: "ui-icon-triangle-1-w"
+            },
+            text: false
+        }).next().button({
+            icons: {
+                primary: "ui-icon-triangle-1-e"
+            },
+            text: false
+        });
+    
     });
 </script>
 {% endblock %}

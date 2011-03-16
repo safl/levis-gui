@@ -26,35 +26,34 @@ hr {
 .toolbar {
     background-color: rgb(0,105,140);      
 	
-    padding: 12px;
-    padding-left: 7px;
+	padding: 3px 7px 3px 7px;
 	
 	border: 0;
 	border-bottom: 1px solid #004D5A;
 }
 
-.toolbar a {
-	
-	color: rgb(230, 240, 240);
-	font-size: 13px;
-	font-weight: bold;	
-	text-decoration: none;
-	
-	border:	1px solid rgb(0,77,90);
-	border-radius:			4px;
-	-moz-border-radius:		4px;
-	-webkit-border-radius:	4px;
-	
-	background-color: rgb(0, 80, 95);
-	background-repeat: no-repeat;
-	background-position: 5px 50%;
-	
-	padding: 3px 8px 3px 24px;
-}
-.toolbar a:hover {
-	color: white;
-	background-color: rgb(0,69,82);
-}
+/*.toolbar a {*/
+/*	*/
+/*	color: rgb(230, 240, 240);*/
+/*	font-size: 13px;*/
+/*	font-weight: bold;	*/
+/*	text-decoration: none;*/
+/*	*/
+/*	border:	1px solid rgb(0,77,90);*/
+/*	border-radius:			4px;*/
+/*	-moz-border-radius:		4px;*/
+/*	-webkit-border-radius:	4px;*/
+/*	*/
+/*	background-color: rgb(0, 80, 95);*/
+/*	background-repeat: no-repeat;*/
+/*	background-position: 5px 50%;*/
+/*	*/
+/*	padding: 3px 8px 3px 24px;*/
+/*}*/
+/*.toolbar a:hover {*/
+/*	color: white;*/
+/*	background-color: rgb(0,69,82);*/
+/*}*/
 
 .submenu {
 	float: left;
@@ -73,7 +72,14 @@ hr {
 	-moz-border-radius-bottomright:		8px;
 	-webkit-border-bottom-right-radius: 8px;
 }
+.submenu p a {
+	display: block;
+	margin-bottom: 2px;
+	text-align: left;
+	font-weight: normal;
+}
 
+/*
 .submenu p a {
 	display:block; 
 	color:white; 
@@ -99,7 +105,7 @@ hr {
 	font-weight: bold; 
 	background: url('/static/img/icons/bullet_star.png') no-repeat scroll 2px 50%;
 	background-color:rgb(0,77,90);
-}
+}*/
 
 .submenu input {
 	display: block;

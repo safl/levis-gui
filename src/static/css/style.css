@@ -247,68 +247,22 @@ table.levis_listing tfoot tr td.left {
 	padding:3px 6px 3px 22px;
 }
 
+/*
+
+	Scheduling
+	
+*/
 table.schedule {
 	border-collapse: separate;
 	border-spacing: 0 0;
 	border: 1px solid gray;
 	
-	width: 100%;
-	
-	padding: 0px;
-	
+	padding: 0px;	
 	background-color: white;
-
 }
 
-table.schedule tbody {
-	display: table-row-group;
-	vertical-align: middle;
-	border-color: inherit;
-}
-
-table.schedule tr.days td {
-	text-align: center;
-	background-color: darkgray;
-	padding: 3px;	
-}
-
-table.schedule td {
-	vertical-align: top;
-}
-
-table.schedule td.hours {
-	width: 60px;
-	background-color: #F2F5F7;	
-	padding: 1px 0 1px 0;
-}
-table.schedule td.hours div {
-	height: 41px;
-	text-align: right;
-	padding-right: 1px;
-	border-bottom: 1px solid gray;
-}
-table.schedule td.hours div div {
-	height: 41px;	
-}
-table.schedule td div.event_spacer {
-	height: 1008px;
-	margin-bottom: -1008px;
-	position: relative;
-}
-table.schedule td div.event_wrapper {
-	height: 1008px;
-	margin-bottom: -1008px;
-	position: relative;
-	border-left: 1px solid lightgray;
-}
-
-table.schedule td div.event_container {
-	position: absolute;	
-	overflow: hidden;
-	width: 100%;	
-}
-
-table.schedule td div.event_container dl {	
+/* This is what an event looks like */
+dl.event {
 	background-color: #32C8E6;
 	padding: 0 0 1px;
 	margin: 0;
@@ -317,35 +271,170 @@ table.schedule td div.event_container dl {
 	
 	border-radius: 4px;
 	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;		
+	-webkit-border-radius: 4px;
 }
 
-table.schedule td div.event_container dl dt {
+dl.event dt {
 	background-color: #3096e5;
 	padding: 0 1px;
 }
 
-table.schedule td div.event_container dl dd {
+dl.event dd {
 	padding: 0 1px;
 	margin: 0;
 }
 
-.event_spanningwrapper {
+/* Horizontal */
+table.schedule.horizontal {
+	width: 100%;
+}
+
+table.schedule.horizontal tbody {
+	display: table-row-group;
+	vertical-align: middle;
+	border-color: inherit;
+}
+
+table.schedule.horizontal tr.days td {
+	text-align: center;
+	background-color: darkgray;
+	padding: 3px;	
+}
+
+table.schedule.horizontal td {
+	vertical-align: top;
+}
+
+table.schedule.horizontal td.hours {
+	width: 60px;
+	background-color: #F2F5F7;	
+	padding: 0px 0 0px 0;	
+}
+table.schedule.horizontal td.hours div {	
+	height: 41px;
+	text-align: right;
+	padding-right: 1px;
+	border-bottom: 1px solid gray;
+}
+table.schedule.horizontal td.hours div div {
+	height: 41px;	
+}
+
+/* event container */
+table.schedule.horizontal td div.event_spacer {
+
+	position: relative;
+}
+table.schedule.horizontal td div.event_wrapper {
+
+	position: relative;
+	border-left: 1px solid lightgray;
+}
+
+table.schedule.horizontal td div.event_container {
+	position: absolute;	
+	overflow: hidden;
+}
+
+/* time markers */
+table.schedule.horizontal div.event_spanningwrapper {
 	position: relative;
 	top: 1px;
 	margin-left: 1px;
 }
 
-.event_hourmarker {
+table.schedule.horizontal div.event_hourmarker {
+	position: absolute;
+	width: 100%;
+	height: 1008px;
+}
+
+table.schedule.horizontal div.event_markercell {
+	float: left;
+	height: 100%;
+	width: 42px;	
+}
+
+table.schedule.horizontal div.event_dualmarker {
+	float: left;	
+	height: 100%;
+	width: 20px;	
+	margin-right: 20px;
+	
+	border-right: 1px dotted #DDD;
+	border-left: 1px solid #DDD;
+	font-size: 1px;
+}
+
+/* Vertical */
+table.schedule.vertical {
+	width: 100%;
+}
+
+table.schedule.vertical tbody {
+	display: table-row-group;
+	vertical-align: middle;
+	border-color: inherit;
+}
+
+table.schedule.vertical tr.days td {
+	text-align: center;
+	background-color: darkgray;
+	padding: 3px;	
+}
+
+table.schedule.vertical td {
+	vertical-align: top;
+}
+
+table.schedule.vertical td.hours {
+	width: 60px;
+	background-color: #F2F5F7;	
+	padding: 1px 0 1px 0;
+}
+table.schedule.vertical td.hours div {
+	height: 41px;
+	text-align: right;
+	padding-right: 1px;
+	border-bottom: 1px solid gray;
+}
+table.schedule.vertical td.hours div div {
+	height: 41px;	
+}
+table.schedule.vertical td div.event_spacer {
+	height: 1008px;
+	margin-bottom: -1008px;
+	position: relative;
+}
+table.schedule.vertical td div.event_wrapper {
+	height: 1008px;
+	margin-bottom: -1008px;
+	position: relative;
+	border-left: 1px solid lightgray;
+}
+
+table.schedule.vertical td div.event_container {
+	position: absolute;	
+	overflow: hidden;
+	width: 100%;	
+}
+
+table.schedule.vertical div.event_spanningwrapper {
+	position: relative;
+	top: 1px;
+	margin-left: 1px;
+}
+
+table.schedule.vertical div.event_hourmarker {
 	position: absolute;
 	width: 100%;
 }
 
-.event_markercell {
+table.schedule.vertical div.event_markercell {
 	height: 42px;
 }
 
-.event_dualmarker {
+table.schedule.vertical div.event_dualmarker {
 	height: 20px;
 	margin-bottom: 20px;
 	

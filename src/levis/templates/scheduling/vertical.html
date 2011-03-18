@@ -1,7 +1,7 @@
 {% extends "scheduling/base.html" %}
 {% block scheduling %}
 <div>
-<table class="schedule">
+<table class="schedule vertical">
 <tr class="days">
     <td><a href="/{{appname}}/my_week/{{date|date:"Y-m-d"}}">Week {{date|date:"W"}}</a></td>
     {% for day in days %}
@@ -53,7 +53,7 @@
         <div class="event_wrapper">            
             {% for event in events_on_day %}
             <div class="event_container" style="top: {{event.top}}px;">
-                <dl>
+                <dl class="event">
                     <dt>
                         {{ event.time_start|time:"H:i" }} - {{ event.time_end|time:"H:i" }}
                     </dt>
@@ -70,25 +70,4 @@
 </table>
 </div>
 
-<script type="text/javascript">
-	$(function(){
-        
-        $('#datepicker').datepicker({
-            inline: true,
-            changeMonth: true,
-			changeYear: true,
-            showOtherMonths: true,
-            showButtonPanel: true,
-			selectOtherMonths: true,
-            showWeek: true,
-			firstDay: 1,
-            dateFormat: 'yy-mm-dd',
-            defaultDate: '{{ date|date:"Y-m-d" }}',
-            onSelect: function(dateText, inst) {
-                window.location = dateText;
-            }
-        });
-       
-    });
-</script>
 {% endblock %}

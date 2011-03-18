@@ -1,4 +1,84 @@
 {% extends "scheduling/base.html" %}
 {% block scheduling %}
-Horizontal day view
+<div>
+<table style="background-color: white; position: relative; width: 100%; " cellspacing="0" cellpadding="0">
+<tr>
+    <td style="background-color: gray; width: 40px;"><a href="/{{appname}}/my_week/{{date|date:"Y-m-d"}}">Week {{date|date:"W"}}</a></td>
+    {% for day in days %}
+    <td style="background-color: lightgray;"><a href="/{{appname}}/my_day/{{day|date:"Y-m-d"}}">{{day|date:"D j/n"}}</a></td>
+    {% endfor %}
+</tr>
+<tr>
+    <td>sdf</td>
+<td class="horiz_hours">
+    {% for hour in slots %}<div>{{hour}}</div>{% endfor %}
+</td>
+</tr>
+{% for events_on_day in events %}
+<tr>
+    <td></td>
+    <td>
+        <div class="horize_spacer"></div>
+        <div class="horize_wrapper">
+            {% for event in events_on_day %}
+            <div class="horize_container" style="left: {{event.left}}px;">
+                <dl>
+                    <dt>
+                        {{ event.time_start|time:"H:i" }} - {{ event.time_end|time:"H:i" }}
+                    </dt>
+                    <dd>
+                        {{ event.description }}
+                    <dd>
+                </dl>
+            </div>
+            {% endfor %}
+        </div>
+    </td>
+</tr>
+{% endfor %}
+<tr height="1">
+    <td style="background-color: gray;">safl</td>
+    <td>
+        <div class="horiz_wrapper">
+            <div class="horiz_hourmarker">
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+                <div class="horiz_markercell"><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div><div class="horiz_dualmarker"></div></div>
+            </div>
+        </div>
+    </td>
+</tr>
+
+</table>
+</div>
+<div id="stuff">sdfsdf</div>
+<script>
+$('.horiz_wrapper').click(function() {
+  
+  $("#stuff").append('<strong>yoyoyo</strong>');
+  
+});
+</script>
+
 {% endblock %}

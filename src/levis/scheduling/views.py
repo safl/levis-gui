@@ -61,6 +61,19 @@ def occurence(start, end):
                 6: event.sun
             }
             event.top = event.time_start.hour * 42
+            event.left = event.time_start.hour * 63
+            d_end = datetime.timedelta(
+                hours   = event.time_end.hour,
+                minutes = event.time_end.minute
+            )
+            d_start = datetime.timedelta(
+                hours   = event.time_start.hour,
+                minutes = event.time_start.minute
+            )
+            d_elapsed = d_end - d_start
+            event.elapsed = ((d_elapsed.seconds /60)/60)*42
+
+            
             if event.frequency.name == "SINGULAR":
                 
                 occurence.append(copy.copy(event))
@@ -113,7 +126,7 @@ def view(view, start, end, prev, next, weekday):
     while(day<=end):
         days.append(day)
         day+= datetime.timedelta(days=1)
-    
+    events = occurence(start, end)
     return render_to_response(
         'scheduling/%s.html' % view, {
             'date': date,
@@ -123,8 +136,9 @@ def view(view, start, end, prev, next, weekday):
             'end': end,
             'next': next,
             'prev': prev,
-            'events': occurence(start, end),
-            'slots': ("%02d:00" % slot for slot in xrange(0, 24)),
+            'kinck': len(events) *42,
+            'events': events,
+            'slots': ["%02d:00" % slot for slot in xrange(0, 24)],
             'title': 'Scheduling..',
             'err': None,
             'appname': 'scheduling',
@@ -148,8 +162,44 @@ def day(request, date=None):
     
     weekday = date.weekday()
         
-    return view('day', start, end, prev, next, weekday)
+    return view('horizontal', start, end, prev, next, weekday)
     
+def week(request, date=None):
+    
+    today = datetime.date.today()
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    else:
+        date = today
+    
+    start   = date
+    end     = date    
+    
+    prev    = date-datetime.timedelta(days=1)
+    next    = date+datetime.timedelta(days=1)
+    
+    weekday = date.weekday()
+    
+    return view('week', start, end, prev, next, weekday)
+
+def month(request, date=None):
+    
+    today = datetime.date.today()
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    else:
+        date = today
+    
+    start   = date
+    end     = date    
+    
+    prev    = date-datetime.timedelta(days=1)
+    next    = date+datetime.timedelta(days=1)
+    
+    weekday = date.weekday()
+        
+    return view('month', start, end, prev, next, weekday)
+
 def my_day(request, date=None):
     
     today = datetime.date.today()
@@ -168,24 +218,6 @@ def my_day(request, date=None):
         
     return view('vertical', start, end, prev, next, weekday)
 
-def week(request, date=None):
-    
-    today = datetime.date.today()
-    if date:
-        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-    else:
-        date = today
-    
-    start   = date
-    end     = date    
-    
-    prev    = date-datetime.timedelta(days=1)
-    next    = date+datetime.timedelta(days=1)
-    
-    weekday = date.weekday()
-    
-    return view('week', start, end, prev, next, weekday)
-    
 def my_week(request, date=None):
     
     today = datetime.date.today()
@@ -205,24 +237,6 @@ def my_week(request, date=None):
     weekday = date.weekday()
         
     return view('vertical', start, end, prev, next, weekday)
-    
-def month(request, date=None):
-    
-    today = datetime.date.today()
-    if date:
-        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-    else:
-        date = today
-    
-    start   = date
-    end     = date    
-    
-    prev    = date-datetime.timedelta(days=1)
-    next    = date+datetime.timedelta(days=1)
-    
-    weekday = date.weekday()
-        
-    return view('month', start, end, prev, next, weekday)
 
 def my_agenda(request, date=None):
     

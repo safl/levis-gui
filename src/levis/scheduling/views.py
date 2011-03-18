@@ -34,6 +34,7 @@ def occurence(start, end):
     date    = start
     delta   = datetime.timedelta(days=1)
     
+    earliest = 1008
     while(date <= end):
         
         occurence = []
@@ -72,49 +73,48 @@ def occurence(start, end):
             )
             d_elapsed = d_end - d_start
             event.elapsed = ((d_elapsed.seconds /60)/60)*42
-
             
+            do_append = False
             if event.frequency.name == "SINGULAR":
                 
-                occurence.append(copy.copy(event))
+                do_append = True
             
             if event.frequency.name == "DAILY" and \
                 (offset.days % int(event.interval)) == 0:
-                                
-                e = copy.copy(event)
-                e.date_start    = date
-                e.date_end      = date
-                occurence.append(e)
+                
+                do_append = True                
                 
             elif event.frequency.name == "WEEKLY" and \
                 dow[weekday] == 1 and \
                 offset_weeks % event.interval == 0:
-                                
-                e = copy.copy(event)
-                e.date_start    = date
-                e.date_end      = date
-                occurence.append(e)
+                
+                do_append = True                
             
             elif event.frequency.name == "MONTHLY_BY_DOM" and \
                 date.day == event.interval:
                 
-                e = copy.copy(event)
-                e.date_start    = date
-                e.date_end      = date
-                occurence.append(e)
+                do_append = True
                 
             elif event.frequency.name == "MONTHY_BY_DOW" and \
                 dow[weekday] == 1:
                 # Add criteria for first/second etc.
                 
-                event.date_start    = date
-                event.date_end      = date
-                occurence.append(event)
+                do_append = True
+                
+            if do_append:
+                e = copy.copy(event)
+                e.date_start    = date
+                e.date_end      = date
+                occurence.append(e)
+                
+                hmm = (d_start.seconds / 60 / 60) * 42
+                if hmm < earliest:
+                    earliest = hmm
                 
         occurences.append(occurence)
         date += delta
     
-    return occurences
+    return (occurences, earliest)
 
 def view(view, start, end, prev, next, weekday):
     
@@ -126,7 +126,7 @@ def view(view, start, end, prev, next, weekday):
     while(day<=end):
         days.append(day)
         day+= datetime.timedelta(days=1)
-    events = occurence(start, end)
+    (events, earliest) = occurence(start, end)
     return render_to_response(
         'scheduling/%s.html' % view, {
             'date': date,
@@ -136,6 +136,7 @@ def view(view, start, end, prev, next, weekday):
             'end': end,
             'next': next,
             'prev': prev,
+            'earliest': earliest,
             'kinck': len(events) *42,
             'events': events,
             'slots': ["%02d:00" % slot for slot in xrange(0, 24)],

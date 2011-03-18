@@ -287,6 +287,7 @@ dl.event dd {
 /* Horizontal */
 table.schedule.horizontal {
 	width: 100%;
+	overflow: auto;
 }
 
 table.schedule.horizontal tbody {
@@ -333,7 +334,6 @@ table.schedule.horizontal td div.event_wrapper {
 
 table.schedule.horizontal td div.event_container {
 	position: absolute;	
-	overflow: hidden;
 }
 
 /* time markers */

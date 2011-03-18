@@ -263,6 +263,8 @@ table.schedule {
 
 /* This is what an event looks like */
 dl.event {
+	min-height: 35px;
+	
 	background-color: #32C8E6;
 	padding: 0 0 1px;
 	margin: 0;
@@ -323,17 +325,15 @@ table.schedule.horizontal td.hours div div {
 
 /* event container */
 table.schedule.horizontal td div.event_spacer {
-
-	position: relative;
+	position: relative;	
 }
 table.schedule.horizontal td div.event_wrapper {
-
 	position: relative;
 	border-left: 1px solid lightgray;
 }
-
 table.schedule.horizontal td div.event_container {
-	position: absolute;	
+	position: absolute;
+	overflow: hidden;
 }
 
 /* time markers */
@@ -352,14 +352,14 @@ table.schedule.horizontal div.event_hourmarker {
 table.schedule.horizontal div.event_markercell {
 	float: left;
 	height: 100%;
-	width: 42px;	
+	width: 84px;
 }
 
 table.schedule.horizontal div.event_dualmarker {
 	float: left;	
 	height: 100%;
-	width: 20px;	
-	margin-right: 20px;
+	width: 41px;	
+	margin-right: 41px;
 	
 	border-right: 1px dotted #DDD;
 	border-left: 1px solid #DDD;

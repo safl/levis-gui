@@ -9,14 +9,15 @@
     {% endfor %}
 </tr>
 </table>
-<div style="overflow: auto;">
-<table class="schedule horizontal" >
+<!--<div style="overflow: auto;">-->
+<div style="overflow: auto; width: 600px;" id="schedule_width">
+<table class="schedule horizontal" style="width: 2150px;">
 <tr>
     <td></td>
     <td>
-        <div style="position: relative; left: 1px;">
+        <div style="position: relative; left: 2px;  clear: both;">
         {% for hour in slots %}
-        <div style="float: left; width: 42px; "><div style="border-left: 1px solid black; padding-left: 1px;">{{hour}}</div></div>
+        <div style="float: left; width: 84px; "><div style="border-left: 1px solid black; padding-left: 1px;">{{hour}}</div></div>
         {% endfor %}
         </div>
     </td>
@@ -64,7 +65,7 @@
         <div class="event_spacer"></div>
         <div class="event_wrapper">
             {% for event in events_on_day %}
-            <div class="event_container" style="left: {{event.top}}px; width: {{event.elapsed}}px;">
+            <div class="event_container" style="left: {{event.left}}px; width: {{event.elapsed}}px;">
                 <dl class="event">
                     <dt>
                         {{ event.time_start|time:"H:i" }} - {{ event.time_end|time:"H:i" }}
@@ -82,5 +83,23 @@
 {% endfor %}
 </table>
 </div>
+
+<script type="text/javascript">
+	$(function(){
+       
+		function resize_schedule() {
+            
+            $('#schedule_width').width(	// Fit height
+				$(window).width() -
+				($("#schedule_width").offset().left+50)
+			);
+            $('#schedule_width').scrollLeft( {{earliest}}*2 );
+		}
+       
+		$(window).resize( resize_schedule );    // Resize schedule when window
+		resize_schedule();                      // Resize schedule initially        
+       
+    });
+</script>
 
 {% endblock %}

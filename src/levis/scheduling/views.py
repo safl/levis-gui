@@ -62,7 +62,7 @@ def occurence(start, end):
                 6: event.sun
             }
             event.top = event.time_start.hour * 42
-            event.left = event.time_start.hour * 63
+            event.left = event.time_start.hour * 84
             d_end = datetime.timedelta(
                 hours   = event.time_end.hour,
                 minutes = event.time_end.minute

@@ -27,3 +27,7 @@ nav-prev: resultset_previous.png
 nav-next: resultset_next.png
 nav-first: resultset_first.png
 nav-last: resultset_last.png
+csv: page_white_excel.png
+pdf: page_white_acrobat.png
+json: page_white_code.png
+admin: bricks.png

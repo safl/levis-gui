@@ -49,6 +49,12 @@ hr {
     text-decoration: none;
     background-color:rgb(0,77,80);
 }
+fieldset .gui-button {
+	background-color: lightgray;
+}
+fieldset .gui-button:hover {
+	background-color: gray;
+}
 .gui-icon {
     width: 16px;
     height: 16px;

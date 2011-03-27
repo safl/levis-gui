@@ -9,10 +9,12 @@
         <span class="gui-icon gui-icon-organization"></span>
         Organizations
     </a>
+    <!--
     <a href="/monitoring/" class="gui-button" role="button">
         <span class="gui-icon gui-icon-monitoring"></span>
         Devices
     </a>
+    -->
     <a href="/helpdesk/" class="gui-button" role="button">
         <span class="gui-icon gui-icon-helpdesk"></span>
         Helpdesk
@@ -21,6 +23,10 @@
         <span class="gui-icon gui-icon-scheduling"></span>
         Scheduling
     </a>
+    <a href="/accounting/" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-accounting"></span>
+        Accounting
+    </a>
     <a href="/reports/" class="gui-button" role="button">
         <span class="gui-icon gui-icon-reports"></span>
         Reports
@@ -28,6 +34,10 @@
     <a href="/knowledge/" class="gui-button" role="button">
         <span class="gui-icon gui-icon-knowledge"></span>
         Knowledge
+    </a>
+    <a href="/admin/" class="gui-button" role="button">
+        <span class="gui-icon gui-icon-admin"></span>
+        Admin
     </a>
     <a href="/auth/logout/"  style="float: right;" class="gui-button" role="button">
         <span class="gui-icon gui-icon-logout"></span>
@@ -65,6 +75,20 @@
     
     <fieldset>
         <legend>Browse {{ app }}</legend>
+        <div style="margin-top: -30px; clear: both; display: block; float: right;">
+            <a href="pdf" class="gui-button icon">
+                <span class="gui-icon gui-icon-pdf"></span>
+            </a>
+            <a href="csv" class="gui-button">
+                <span class="gui-icon gui-icon-csv"></span>
+            </a>
+            <a href="json" class="gui-button">
+                <span class="gui-icon gui-icon-json"></span>
+            </a>
+            <a href="/knowledge/{{appname}}/{{action}}" class="gui-button">
+                <span class="gui-icon gui-icon-knowledge"></span>
+            </a>
+        </div>
         {% block fieldset %}{% endblock %}
     </fieldset>
     

@@ -1,5 +1,6 @@
 import logging
 import datetime
+import calendar
 import pprint
 import math
 import copy
@@ -127,6 +128,7 @@ def view(view, start, end, prev, next, weekday):
         days.append(day)
         day+= datetime.timedelta(days=1)
     (events, earliest) = occurence(start, end)
+    
     return render_to_response(
         'scheduling/%s.html' % view, {
             'date': date,
@@ -143,7 +145,7 @@ def view(view, start, end, prev, next, weekday):
             'title': 'Scheduling..',
             'err': None,
             'appname': 'scheduling',
-            'submenu': [('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('-','-'), ('my_day', 'My Day'), ('my_week', 'My Week'), ('my_agenda', 'My Agenda')]
+            'submenu': [('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('-','-'), ('my_day', 'My Day'), ('my_week', 'My Week'), ('my_month', 'My Month'), ('my_agenda', 'My Agenda')]
         }
     )
 
@@ -234,6 +236,27 @@ def my_week(request, date=None):
     
     prev    = date-datetime.timedelta(days=6)
     next    = date+datetime.timedelta(days=7)
+    
+    weekday = date.weekday()
+        
+    return view('vertical', start, end, prev, next, weekday)
+    
+def my_month(request, date=None):
+    
+    today = datetime.date.today()
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+    else:
+        date = today
+    
+    (month_weekday, end_day) = calendar.monthrange(date.year, date.month)
+    date    = datetime.date(date.year, date.month, 1)
+    
+    start   = datetime.date(date.year, date.month, 1)
+    end     = datetime.date(date.year, date.month, end_day)
+    
+    prev    = start-datetime.timedelta(days=1)
+    next    = end+datetime.timedelta(days=1)
     
     weekday = date.weekday()
         

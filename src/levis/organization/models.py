@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ModelForm
 
 class Organization(models.Model):
     """
@@ -8,14 +9,54 @@ class Organization(models.Model):
     to form a set of organizational relations.
     """
     
-    name        = models.CharField(max_length=100)
-    description = models.CharField(max_length=255)
-    
-    affiliate   = models.ManyToManyField('self')    # Related organizations
+    name        = models.CharField(
+        max_length  = 100,
+        unique      = True
+    )
+    description = models.CharField(
+        max_length  = 255,
+        blank       = True
+    )
+        
+    affiliate   = models.ManyToManyField(           # Related organizations
+        'self',
+        blank=True
+    )
     
     def __unicode__(self):
         return self.name
+    
+    def __ripped__(self):
+        return {'name': self.name, 'description': self.description}
+        
+    def __csv__(self):
+        return [self.name, self.description]
 
+    class Meta:
+        ordering = ["name"]
+
+class OrganizationForm(ModelForm):
+    
+    class Meta:
+        model = Organization
+
+class Alias(models.Model):
+    """
+    An organizations alias, typically organizations such as
+    "Hennes and Mauritz" is also known by the name "H & M", having aliases
+    makes searching for customers a lot easier.
+    """
+    
+    name    = models.CharField(
+        max_length  = 100,
+        unique      = True
+    )
+    
+    organization = models.ForeignKey(Organization)
+    
+    def __unicode__(self):
+        return self.name
+    
     class Meta:
         ordering = ["-name"]
     

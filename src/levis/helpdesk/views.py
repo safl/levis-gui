@@ -1,10 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
+from django.template import RequestContext
 
 def index(request):
-    return render_to_response(
-        'base.content.html', {
-            'submenu': ['Browse', 'New Ticket'],
-            'err': None
-        }
-    )
+    
+    c = RequestContext(request, {
+        'submenu': ['Browse', 'New Ticket'],
+        'err': None
+    })
+    
+    return render_to_response( 'base.content.html', c )

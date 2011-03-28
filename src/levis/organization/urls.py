@@ -3,7 +3,7 @@ from organization.models import Organization
 
 info_dict = {
     'queryset': Organization.objects.all(),
-    'paginate_by': 30
+    'paginate_by': 25
 }
 
 urlpatterns = patterns('',

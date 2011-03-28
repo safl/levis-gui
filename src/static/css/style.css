@@ -164,7 +164,9 @@ fieldset {
 
 fieldset legend {	
 	font-weight: bold;
-	padding: 4px 24px;
+	padding: 3px 10px 1px 5px;
+	
+	background-color: #ccc;
 	
 	border: 1px solid gray;
 	-webkit-border-radius: 4px;

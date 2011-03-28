@@ -1,44 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="toolbar">
-    <a href="/dashboard/" class="gui-button">
-        <span class="gui-icon gui-icon-dashboard"></span>
-        Dashboard
-    </a>
-    <a href="/organization/" class="gui-button" role="button">
-        <span class="gui-icon gui-icon-organization"></span>
-        Organizations
-    </a>
-    <!--
-    <a href="/monitoring/" class="gui-button" role="button">
-        <span class="gui-icon gui-icon-monitoring"></span>
-        Devices
-    </a>
-    -->
-    <a href="/helpdesk/" class="gui-button" role="button">
-        <span class="gui-icon gui-icon-helpdesk"></span>
-        Helpdesk
-    </a>
-    <a href="/scheduling/" class="gui-button" role="button">
-        <span class="gui-icon gui-icon-scheduling"></span>
-        Scheduling
-    </a>
-    <a href="/accounting/" class="gui-button" role="button">
-        <span class="gui-icon gui-icon-accounting"></span>
-        Accounting
-    </a>
-    <a href="/reports/" class="gui-button" role="button">
-        <span class="gui-icon gui-icon-reports"></span>
-        Reports
-    </a>
-    <a href="/knowledge/" class="gui-button" role="button">
-        <span class="gui-icon gui-icon-knowledge"></span>
-        Knowledge
-    </a>
-    <a href="/admin/" class="gui-button" role="button">
-        <span class="gui-icon gui-icon-admin"></span>
-        Admin
-    </a>
+    
+    {% for url, text in menu %}
+        <a href="/{{ url }}/" class="gui-button">
+            <span class="gui-icon gui-icon-{{ url }}"></span>
+            {{ text }}
+        </a>
+    {% endfor %}
+
     <a href="/auth/logout/"  style="float: right;" class="gui-button" role="button">
         <span class="gui-icon gui-icon-logout"></span>
         Logout
@@ -55,7 +25,7 @@
     </p>
     <p> 
         {% else %}
-        <a href="/{{appname}}/{{link}}" class="gui-button ">
+        <a href="/{{ appname }}/{{ link }}" class="gui-button ">
             <span class="gui-icon gui-icon-scheduling-{{link}}"></span>
             {{menu_item}}
         </a>
@@ -74,9 +44,9 @@
     <div class="content">    
     
     <fieldset>
-        <legend>Browse {{ app }}</legend>
+        <legend><span class="gui-icon gui-icon-{{ appname }}"></span>&nbsp;&nbsp;{{ appname|capfirst }} {% if view %}- {{ view|capfirst }}{% endif %}</legend>
         <div style="margin-top: -30px; clear: both; display: block; float: right;">
-            <a href="pdf" class="gui-button icon">
+            <a href="pdf" class="gui-button">
                 <span class="gui-icon gui-icon-pdf"></span>
             </a>
             <a href="csv" class="gui-button">

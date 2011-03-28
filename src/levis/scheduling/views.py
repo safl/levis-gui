@@ -8,6 +8,7 @@ import copy
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.db.models import Q
+from django.template import RequestContext
 
 from scheduling.models import Event
 
@@ -117,7 +118,7 @@ def occurence(start, end):
     
     return (occurences, earliest)
 
-def view(view, start, end, prev, next, weekday):
+def view(request, view, start, end, prev, next, weekday):
     
     today = datetime.date.today()
     date    = start
@@ -129,25 +130,22 @@ def view(view, start, end, prev, next, weekday):
         day+= datetime.timedelta(days=1)
     (events, earliest) = occurence(start, end)
     
-    return render_to_response(
-        'scheduling/%s.html' % view, {
-            'date': date,
-            'days': days,
-            'today': today,
-            'start': start,
-            'end': end,
-            'next': next,
-            'prev': prev,
-            'earliest': earliest,
-            'kinck': len(events) *42,
-            'events': events,
-            'slots': ["%02d:00" % slot for slot in xrange(0, 24)],
-            'title': 'Scheduling..',
-            'err': None,
-            'appname': 'scheduling',
-            'submenu': [('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('-','-'), ('my_day', 'My Day'), ('my_week', 'My Week'), ('my_month', 'My Month'), ('my_agenda', 'My Agenda')]
-        }
-    )
+    c = RequestContext(request, {
+        'date': date,
+        'days': days,
+        'today': today,
+        'start': start,
+        'end': end,
+        'next': next,
+        'prev': prev,
+        'earliest': earliest,
+        'kinck': len(events) *42,
+        'events': events,
+        'slots': ["%02d:00" % slot for slot in xrange(0, 24)],
+        'title': 'Scheduling..'
+    })
+    
+    return render_to_response( 'scheduling/%s.html' % view, c )
 
 def day(request, date=None):
     
@@ -165,7 +163,7 @@ def day(request, date=None):
     
     weekday = date.weekday()
         
-    return view('horizontal', start, end, prev, next, weekday)
+    return view(request, 'horizontal', start, end, prev, next, weekday)
     
 def week(request, date=None):
     
@@ -183,7 +181,7 @@ def week(request, date=None):
     
     weekday = date.weekday()
     
-    return view('week', start, end, prev, next, weekday)
+    return view(request, 'week', start, end, prev, next, weekday)
 
 def month(request, date=None):
     
@@ -201,7 +199,7 @@ def month(request, date=None):
     
     weekday = date.weekday()
         
-    return view('month', start, end, prev, next, weekday)
+    return view(request, 'month', start, end, prev, next, weekday)
 
 def my_day(request, date=None):
     
@@ -219,7 +217,7 @@ def my_day(request, date=None):
     
     weekday = date.weekday()
         
-    return view('vertical', start, end, prev, next, weekday)
+    return view(request, 'vertical', start, end, prev, next, weekday)
 
 def my_week(request, date=None):
     
@@ -239,7 +237,7 @@ def my_week(request, date=None):
     
     weekday = date.weekday()
         
-    return view('vertical', start, end, prev, next, weekday)
+    return view(request, 'vertical', start, end, prev, next, weekday)
     
 def my_month(request, date=None):
     
@@ -260,7 +258,7 @@ def my_month(request, date=None):
     
     weekday = date.weekday()
         
-    return view('vertical', start, end, prev, next, weekday)
+    return view(request, 'vertical', start, end, prev, next, weekday)
 
 def my_agenda(request, date=None):
     
@@ -278,4 +276,4 @@ def my_agenda(request, date=None):
     
     weekday = date.weekday()
         
-    return view('agenda', start, end, prev, next, weekday)
+    return view(request, 'agenda', start, end, prev, next, weekday)

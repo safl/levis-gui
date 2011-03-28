@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
 from django.contrib.auth import authenticate, login
+from django.template import RequestContext
 
 from organization.models import Organization, OrganizationForm
 
@@ -20,11 +21,11 @@ def add(request):
     else:
         form = OrganizationForm()
 
-    c = {
+    c = RequestContext(request, {
         'form': form,
         'appname': 'organization',
         'submenu': [('index', 'Browse'), ('add', 'Add')]
-    }
+    })
     c.update(csrf(request))
     
     return render_to_response('base.fieldset.form.html', c)
@@ -32,9 +33,10 @@ def add(request):
 def view(request, id):
     
     o = Organization.objects.get(pk=id)
-    c = {
+    
+    c = RequestContext(request, {
         'organization': o
-    }
+    })
     
     return render_to_response('organization/view.html', c)
 

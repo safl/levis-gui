@@ -81,6 +81,15 @@ TEMPLATE_DIRS = (
     "/home/safl/Desktop/levis-gui/src/levis/templates"
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.contrib.messages.context_processors.messages",
+    "levis.context_processors.menu"
+)
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -89,12 +98,45 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     
-    'accounting',    
     'dashboard',
-    'hact',
-    'helpdesk',
-    'monitoring',
-    'organization',
+    'organization',    
+    'helpdesk',    
+    'scheduling',
+    'accounting',
     'reports',
-    'scheduling'
+    'hact'
+    
 )
+
+MENU_TREE = [
+    ('dashboard',       [('normal', 'Dashboard'), ('mini', 'Mini'), ('wall', 'Wall')]),
+    ('organization',    [('browse', 'Browse'), ('add', 'Add')]),
+    ('helpdesk',        [('browse', 'Browse'), ('add', 'Add')]),
+    ('scheduling',      [
+        ('day', 'Day'), ('week', 'Week'), ('month', 'Month'), ('-','-'),
+        ('my_day', 'My Day'), ('my_week', 'My Week'),
+        ('my_month', 'My Month'), ('my_agenda', 'My Agenda')
+    ]),
+    ('accounting',  [('browse', 'Browse')] ),    
+    ('reports',     [('browse', 'Browse')] ),
+    ('knowledge',   [('browse', 'Browse')] ),
+    ('admin',       None ),
+]
+
+
+IMAP_HOST='imap.googlemail.com'
+IMAP_PORT=993
+IMAP_SSL=True
+IMAP_USER='levistest@safl.dk'
+IMAP_PASS='LevisTesting.11'
+IMAP_POLL=10
+
+POP_HOST='pop.googlemail.com'
+POP_PORT=995
+POP_SSL=True
+POP_USER='levistest@safl.dk'
+POP_PASS='LevisTesting.11'
+POP_POLL=10
+
+BEANSTALK_HOST='localhost'
+BEANSTALK_PORT=11300

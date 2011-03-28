@@ -17,7 +17,7 @@ class Organization(models.Model):
         max_length  = 255,
         blank       = True
     )
-        
+    
     affiliate   = models.ManyToManyField(           # Related organizations
         'self',
         blank=True

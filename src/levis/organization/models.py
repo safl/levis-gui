@@ -26,10 +26,10 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.name
     
-    def __ripped__(self):
+    def __map__(self):
         return {'name': self.name, 'description': self.description}
         
-    def __csv__(self):
+    def __list__(self):
         return [self.name, self.description]
 
     class Meta:

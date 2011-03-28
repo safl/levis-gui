@@ -166,8 +166,6 @@ fieldset legend {
 	font-weight: bold;
 	padding: 4px 24px;
 	
-	background: rgb(236,236,236) url('/static/img/icons/bullet_black.png') no-repeat 4px 50%;
-	
 	border: 1px solid gray;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;

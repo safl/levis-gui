@@ -7,11 +7,11 @@ info_dict = {
 }
 
 urlpatterns = patterns('',
-    (r'^add/?$', 'organization.views.add'),
-    (r'^index/?$', 'django.views.generic.list_detail.object_list', info_dict),
+    (r'^add/?$', 'organization.views.add'),    
     (r'^view/(?P<id>\d+)$', 'organization.views.view'),
     (r'^json/?$', 'organization.views.json'),
     (r'^csv/?$', 'organization.views.csv'),
     (r'^pdf/?$', 'organization.views.pdf'),
+    (r'^index/?$', 'django.views.generic.list_detail.object_list', info_dict),
     (r'^$', 'django.views.generic.list_detail.object_list', info_dict)
 )

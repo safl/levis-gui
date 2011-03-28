@@ -26,7 +26,7 @@ def add(request):
         'submenu': [('index', 'Browse'), ('add', 'Add')]
     }
     c.update(csrf(request))
-
+    
     return render_to_response('base.fieldset.form.html', c)
 
 def view(request, id):
@@ -44,14 +44,13 @@ def login(request):
 def logout(request):
     pass
 
-
 # Alternate data representation
 def json(request):
     response = HttpResponse(mimetype='text/json')
     response['Content-Disposition'] = 'attachment; filename=organizations.json'
 
     s = jsonlib.dumps(
-        [o.__ripped__() for o in Organization.objects.all()]
+        [o.__map__() for o in Organization.objects.all()]
     )
     response.write(s)
     return response
@@ -63,7 +62,7 @@ def csv(request):
     
     writer = csvlib.writer(response)
     for o in Organization.objects.all():
-        writer.writerow(o.__csv__())
+        writer.writerow(o.__list__())
 
     return response
 
@@ -75,7 +74,7 @@ def pdf(request):
     p = canvas.Canvas(response)
     
     for c, o in enumerate(Organization.objects.all()):
-        p.drawString(0, 10*c, "Hello world.")
+        p.drawString(0, 10*c, str(o))
     
     p.showPage()
     p.save()

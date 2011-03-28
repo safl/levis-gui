@@ -3,8 +3,10 @@ from django.shortcuts import render_to_response
 
 def index(request):
     return render_to_response(
-        'base.content.html', {
+        'base.fieldset.html', {
             'msg': 'Well, hello there...',
-            'err': None
+            'err': None,
+            'appname': 'reports',
+            'submenu': [('index', 'Browse'), ('adhoc', 'Adhoc'), ('-',''), ('define', 'Define'), ('template', 'Templates')]
         }
     )

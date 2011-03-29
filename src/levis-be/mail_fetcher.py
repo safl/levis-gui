@@ -1,22 +1,40 @@
 #!/usr/bin/env python
 #
-#   MailFetcher,
 #
-#   Reads mail from one or more POP and/or IMAP servers, queues them in memory
-#   for delivery to beantalk.
+#    MailFetcher,
 #
-#   +------------+  +--------------+
-#   | PopFetcher |  | ImapFetcher  |
-#   +---+--------+  +-----+--------+
-#       |                 |
-#       +-----------------+
-#                         |
-#   +--------+            |
-#   | Queue  |<--- put ---+
-#   +--+-----+
-#      |            +---------+
-#      +--- get --->| Pusher  |-----> BEANSTALK
-#                   +---------+
+#    Reads mail from one or more POP and/or IMAP servers, queues them in memory
+#    for delivery to beantalk. As illustrated below:
+#
+#
+#    +--------------+                +--------+          +---------+
+#    | PopRetriever |-----+---put--->| Queue  |---get--->| Pusher  |
+#    +--------------+     |          +--------+          +--+------+
+#                         |                                 |
+#    +----------------+   |                                 |    +-----------+
+#    | ImapRetriever  |---+                                 +--->| BEANSTALK |
+#    +----------------+                                          +-----------+
+#
+#
+#    A mail is encapsulated as the tuple (account_id, mail) such that the
+#    origin of mail-blob can be identified.
+#
+#    When persisted to disk the mail-blob is identified by the filename:
+#    "<account_id>_<tmpfilename>"
+#
+#    @author Simon A. F. Lund <safl@safl.dk>
+#  
+# TODO:
+#
+#   - Encapsulate fetchers and pushers into MailFetcher class
+#   - Retrieve mails properly
+#   - Persist mails in Queue when terminating
+#   - Load persisted mails into queue when starting MailFetcher
+#   - optparse parameters:
+#
+#       * log-file
+#       * log-level
+#       * localspool-dir for persisted mails
 #
 import threading
 import logging
@@ -73,6 +91,20 @@ class Fetcher(Worker):
         self.poll       = poll
         
         Worker.__init__(self)
+        
+class Pusher(Worker):
+    
+    def __init__(self, q):
+        
+        self.q = q
+        
+        Worker.__init__(self)
+    
+    def work(self):
+        pass
+    
+    def push(self):
+        pass
     
 class PopFetcher(Fetcher):
     
@@ -187,7 +219,7 @@ class ImapFetcher(Fetcher):
             except:
                 logging.debug("Could not close and logout...")
 
-class Pusher(Worker):
+class BeanPusher(Worker):
     """Send messages from local-queue to network-queue."""
     
     def __init__(self, q, hostname, port, tube):
@@ -239,13 +271,30 @@ class Pusher(Worker):
             logging.debug("Try connecting again in 10 seconds..")
             time.sleep(10)
 
+
+class MailFetcher():    
+    
+    def __init__(self, accounts, pusher):
+        
+        self.accounts   = accounts
+        self.pusher     = pusher
+        
+        self.retrievers = []
+        self.threads    = []
+        
+    def start(self):
+        pass
+    
+    def stop(self):
+        pass
+
 def main():
     """Read mail from pop3/imap and push it into the beanstalk queue "mail.in"."""
     
     q = Queue.Queue()
     
     #t = threading.Thread(target=pusher, args=(q, settings.BEANSTALK_HOST, settings.BEANSTALK_PORT))
-    pusher = Pusher(q, settings.BEANSTALK_HOST, settings.BEANSTALK_PORT, 'mail.in')
+    pusher = BeanPusher(q, settings.BEANSTALK_HOST, settings.BEANSTALK_PORT, 'mail.in')
     
     (hostname, port, use_ssl, username, password, poll) = (
         settings.IMAP_HOST,

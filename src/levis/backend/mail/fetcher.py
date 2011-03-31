@@ -34,10 +34,8 @@
 #    - POP3 http://www.faqs.org/rfcs/rfc1939.html
 #    - IMAP http://www.faqs.org/rfcs/rfc3501.html
 #    
-# TODO:
+# TODO: - Excessive testing!
 #
-#   - Remove persisted mail after load.
-#   - Lock mail-queue when shutting down.
 #   - Command-line options:
 #
 #       * log-file
@@ -55,6 +53,7 @@ import poplib
 import pprint
 import glob
 import time
+import os
 
 import beanstalkc
 
@@ -71,6 +70,10 @@ logging.basicConfig(
 
 class Empty(Exception):
     "Exception raised by MailFetcher.get()."
+    pass
+
+class NotReady(Exception):
+    "Exception raised by MailFetcher.get()/put()."
     pass
 
 class Retriever(Worker):
@@ -239,7 +242,8 @@ class MailFetcher(threading.Thread):
         self.resume_threshold   = resume_threshold
         self.pause_threshold    = pause_threshold
         
-        self.paused =  False
+        self.working    = False
+        self.paused     = False
         self.retrievers = []
         self.persist_dir = persist_dir
         
@@ -254,7 +258,9 @@ class MailFetcher(threading.Thread):
         threading.Thread.__init__(self, name=thread_name)
     
     def run(self):
-                
+        
+        self.working = True
+        
         if self.persist_dir:            # Load persisted mails from disk
             self.from_file()
             
@@ -284,26 +290,29 @@ class MailFetcher(threading.Thread):
     
     def stop(self):
         
+        self.working = False
         for t in self.retrievers:
             t.stop()
             
         for t in self.retrievers:
             t.join()
         
-        # Remove any readers of the mail-queue
-        
         if self.persist_dir:    # Persist mail-queue to filesystem
             self.to_file()
     
     def put(self, item):
         
+        if not self.working:
+            raise NotReady            
+            
         self.not_empty.acquire()
         try:
             self._mailq.appendleft(item)
             self._mailq_bytes += item[2]
             logging.debug('Queue size: %d, items=%d.' % (self._mailq_bytes, len(self._mailq)))
             
-            if self._mailq_bytes >= self.pause_threshold:    # Check threshold
+            if not self.paused and \
+                self._mailq_bytes >= self.pause_threshold:  # Pause retriever
                 self.pause()
             
             self.not_empty.notify()
@@ -312,6 +321,9 @@ class MailFetcher(threading.Thread):
             self.not_empty.release()
     
     def get(self, timeout=10.0):
+        
+        if not self.working:
+            raise NotReady
         
         self.not_empty.acquire()
         try:
@@ -328,7 +340,8 @@ class MailFetcher(threading.Thread):
             item = self._mailq.pop()
             self._mailq_bytes -= item[2]
             
-            if self._mailq_bytes <= self.resume_threshold:
+            if self.paused and \
+                self._mailq_bytes <= self.resume_threshold: # Resume retriever
                 self.resume()
             
             logging.debug('Queue size: %d' % self._mailq_bytes)
@@ -369,14 +382,16 @@ class MailFetcher(threading.Thread):
                 
                 with open(fn, 'r') as fd:
                     (acct_id, _) = fn.split('_', 1)
-                    mail    = fd.read()
+                    mail    = fd.read()                 # Read the mail
                     bytes   = len(mail)
                     self._mailq.append((acct_id, mail, bytes))
                     self._mailq_bytes += bytes
                     
+                    os.unlink(fn)                       # Delete the mail
+                    
             except Exception as details:
                 logging.error("Failed reading persisted mail identified by filename [%]. ERR: [%s]" % (fn, details))
-                
+            
         logging.info("Loaded %d mails from file-system of a total of %d bytes." % (len(self._mailq), self._mailq_bytes))
 
 class BeanPusher(Worker):
@@ -418,10 +433,14 @@ class BeanPusher(Worker):
             msg = None
             try:
                 msg = self.get(timeout=10.0)
+            except NotReady:
+                logging.debug("Fetcher is not ready.")
+                time.sleep(0.5)
             except Empty:
-                logging.debug("Mail-queue is empty, nothing to push.")
+                logging.debug("Mail-queue is empty, nothing to push.")                
             except Exception as details:
                 logging.error("Error when requesting mail from fetcher. ERR: [%s]" % details)
+                time.sleep(0.5)
             
             if msg:
                 logging.debug("Got message!")

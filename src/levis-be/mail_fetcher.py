@@ -3,8 +3,8 @@
 #
 #    MailFetcher,
 #
-#    Reads mail from one or more POP and/or IMAP servers, queues them in memory
-#    for delivery to beantalk. As illustrated below:
+#    Reads mail from one or more POP and/or IMAP servers queues them in memory
+#    as illustrated below:
 #
 #
 #    +--------------+                +--------+          +---------+
@@ -23,18 +23,31 @@
 #    "<account_id>_<tmpfilename>"
 #
 #    @author Simon A. F. Lund <safl@safl.dk>
+#
+#    References:
+#
+#    - POP3 http://www.faqs.org/rfcs/rfc1939.html
+#    - IMAP http://www.faqs.org/rfcs/rfc3501.html
 #  
 # TODO:
 #
-#   - Encapsulate fetchers and pushers into MailFetcher class
-#   - Retrieve mails properly
-#   - Persist mails in Queue when terminating
-#   - Load persisted mails into queue when starting MailFetcher
-#   - optparse parameters:
+#   - Retrieve mails properly, assign id and check the return of retrieval
+#   - Persist mails from memory when terminating
+#   - Load persisted mails into memory when starting MailFetcher
+#   - Throttling to avoid flooding, based on pause-threshold and resume-threshold:
+#
+#       * Control the retrieval of mail by:
+#
+#           pausing:    mails in queue > pause-threshold
+#           resuming:   mails in queue < resume-threshold
+#                   
+#   - Command-line options:
 #
 #       * log-file
 #       * log-level
 #       * localspool-dir for persisted mails
+#       * pause-threshold
+#       * resume-threshold
 #
 import threading
 import logging
@@ -49,36 +62,18 @@ import beanstalkc
 from organization.models import Organization
 from django.conf import settings
 
+from levis.backend.utils import Worker
+
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s,%(msecs)d %(levelname)s %(threadName)s %(message)s',
     datefmt='%H:%M:%S'
 )
 
-class Worker(threading.Thread):
+class Retriever(Worker):
     
-    def __init__(self):
-                
-        self.working   = False
-        
-        threading.Thread.__init__(self)
-    
-    def run(self):
-        
-        self.working = True
-        while self.working:
-            self.work()
-            
-        logging.debug("I quit...")
-    
-    def stop(self):
-        self.working = False
-    
-    def work(self):
-        """Override this, this to do the actual work."""
-        pass
-
-class Fetcher(Worker):
+    timeout = 10
+    retry   = 10
     
     def __init__(self, q, hostname, port, use_ssl, username, password, poll):
         
@@ -91,22 +86,8 @@ class Fetcher(Worker):
         self.poll       = poll
         
         Worker.__init__(self)
-        
-class Pusher(Worker):
-    
-    def __init__(self, q):
-        
-        self.q = q
-        
-        Worker.__init__(self)
-    
-    def work(self):
-        pass
-    
-    def push(self):
-        pass
-    
-class PopFetcher(Fetcher):
+            
+class PopRetriever(Retriever):
     
     def work(self):
         
@@ -132,34 +113,43 @@ class PopFetcher(Fetcher):
             connected = True
             
         except Exception as details:    # Publish error
-            logging.debug("POP ERR: [%s]." % details, exc_info=3)
+            logging.error("POP ERR: [%s]." % details)
         
         logging.debug("Connected POP? Answer: %s." % connected)
         if connected:
             
             try:
-                numMessages = len(M.list()[1])
-                for i in range(numMessages):
-                    for j in M.retr(i+1)[1]:
-                        # Put into queue
-                        logging.debug("MSG: %s" % j)
-            except:
-                logging.debug("Error retrieving mails... %s" % details)
+                (numMessages, size) = M.stat()
+                for i in xrange(1, numMessages):
+                    (response, lines, octets) = M.retr(i)
+                    
+                    if response.startswith('+OK'):
+                        msg = ''.join(lines)
+                        self.q.put(("ID", msg, len(msg)))
+                    else:
+                        logging.error('RETR response did not start with "+OK"!')
+                    
+                    if paused:
+                        logging.warn('Pausing retrieval. %d mails are ready for retrieval.' % (numMessages-i))
+                        break
+                    
+            except Exception as details:
+                logging.error("Error retrieving mails... %s" % details)
                 connected = False
             
             logging.debug("Attempting to close...")
             try:                        # Close connection
                 M.quit()                
             except:
-                logging.debug("Could not close and logout...")                
+                logging.error("Could not close and logout...")                
             logging.debug("Did i close?")
         
         if connected:
-            time.sleep(self.poll)    # Wait before accepting to reconnect
+            time.sleep(self.poll)       # Wait before accepting to reconnect
         else:
-            time.sleep(10)      # Wait before accepting to reconnect
+            time.sleep(Retriever.retry)   # Wait before accepting to reconnect
     
-class ImapFetcher(Fetcher):
+class ImapRetriever(Retriever):
     
     def work(self):
         
@@ -192,7 +182,7 @@ class ImapFetcher(Fetcher):
         
         logging.debug("Connected IMAP? Answer: %s." % connected)
         if not connected:               # Wait before accepting to reconnect
-            time.sleep(10)        
+            time.sleep(Retriever.retry)        
         
         while connected and self.working:
             
@@ -203,8 +193,8 @@ class ImapFetcher(Fetcher):
                 for num in data[0].split():
                     typ, data = M.fetch(num, '(RFC822)')
                     logging.debug('Message %s\n' % (num))
-                    #pprint.pprint(data) # Put mail into mail-queue
-                    self.q.put(data[0][1])
+                    msg = data[0][1]
+                    self.q.put(("ID", msg, len(msg)))
                 
                 time.sleep(self.poll)
             except Exception as details:
@@ -219,8 +209,74 @@ class ImapFetcher(Fetcher):
             except:
                 logging.debug("Could not close and logout...")
 
+class MailFetcher(threading.Thread):
+    
+    types = {
+        'POP3': PopRetriever,
+        'IMAP': ImapRetriever
+    }
+    
+    def __init__(self, accounts):
+        
+        self.accounts   = accounts
+        
+        self.q          = Queue.Queue()
+        self.retrievers = []
+
+        for (type, hostname, port, use_ssl, username, password, poll) in accounts:
+            
+            self.retrievers.append(MailFetcher.types[type](
+                self.q, hostname, port, use_ssl, username, password, poll
+            ))
+            
+        threading.Thread.__init__(self)
+    
+    def run(self):
+        
+        # Load persisted mails from disk
+        
+        logging.debug("Starting retrievers...")
+        for t in self.retrievers:
+            t.start()
+        
+        # Todo: monitor queue
+        
+        for t in self.retrievers:
+            t.join()
+        
+        logging.debug("Stopped.")
+    
+    def pause(self):
+    
+        for t in self.retrievers:
+            t.pause()
+    
+    def resume(self):
+        
+        for t in self.retrievers:
+            t.resume()
+    
+    def stop(self):
+        
+        for t in self.retrievers:
+            t.stop()
+            
+        for t in self.retrievers:
+            t.join()
+            
+        # Remove any other readers of queue
+        # Persist any mails in queue
+        
+    def get(self):
+        pass
+    
+    def put(self):
+        pass
+
 class BeanPusher(Worker):
     """Send messages from local-queue to network-queue."""
+    
+    retry_to = 10   # Retry-timeout
     
     def __init__(self, q, hostname, port, tube):
         
@@ -247,95 +303,80 @@ class BeanPusher(Worker):
             connected = True
             
         except Exception as details:
-            logging.debug("Beanstalk ERR: [%s]" % details, exc_info=3)
+            logging.debug("Beanstalk ERR: [%s]" % details)
         
-        logging.debug("Connected Beanstalk? Answer: %s." % connected)
+        logging.debug("Connected to Beanstalk? Answer: %s." % connected)
         while connected and self.working:
             
             msg = None
             try:
-                msg = self.q.get(timeout=10)
+                (id, msg, msg_len) = self.q.get(timeout=10)
             except Queue.Empty:
-                logging.debug("Timeout...")
+                logging.debug("Nothing to push...")
             
             if msg:
                 logging.debug("Got message!")
                 try:
-                    beanstalk.put(str(msg))
+                    beanstalk.put(msg) # serialize...
+                    self.q.task_done()
                 except Exception as details:
                     logging.debug("Error sending it... %s" % details)
-                    self.q.put(msg)  # Put it back in for later processing when reconnected...
+                    self.q.put(("ID", msg, msg_len))  # Put it back in for later processing when reconnected...
                     connected = False
         
         if not connected:
-            logging.debug("Try connecting again in 10 seconds..")
-            time.sleep(10)
-
-
-class MailFetcher():    
-    
-    def __init__(self, accounts, pusher):
-        
-        self.accounts   = accounts
-        self.pusher     = pusher
-        
-        self.retrievers = []
-        self.threads    = []
-        
-    def start(self):
-        pass
-    
-    def stop(self):
-        pass
+            logging.debug("Try connecting again in %d seconds.." % BeanPusher.retry_to)
+            time.sleep(BeanPusher.retry_to)
 
 def main():
     """Read mail from pop3/imap and push it into the beanstalk queue "mail.in"."""
-    
-    q = Queue.Queue()
-    
-    #t = threading.Thread(target=pusher, args=(q, settings.BEANSTALK_HOST, settings.BEANSTALK_PORT))
-    pusher = BeanPusher(q, settings.BEANSTALK_HOST, settings.BEANSTALK_PORT, 'mail.in')
-    
-    (hostname, port, use_ssl, username, password, poll) = (
+        
+    accounts = []
+    accounts.append((
+        "IMAP",
         settings.IMAP_HOST,
         settings.IMAP_PORT,
         settings.IMAP_SSL,
         settings.IMAP_USER,
         settings.IMAP_PASS,
         settings.IMAP_POLL
+    ))
+    
+    #accounts.append((
+    #    "POP3",
+    #    settings.POP_HOST,
+    #    settings.POP_PORT,
+    #    settings.POP_SSL,
+    #    settings.POP_USER,
+    #    settings.POP_PASS,
+    #    settings.POP_POLL
+    #))
+    
+    fetcher = MailFetcher(accounts)
+    fetcher.start()
+    
+    pusher = BeanPusher(
+        fetcher.q,
+        settings.BEANSTALK_HOST,
+        settings.BEANSTALK_PORT,
+        'mail.in'
     )
-    imap_thread = ImapFetcher(q, hostname, port, use_ssl, username, password, poll)
-    
-    (hostname, port, use_ssl, username, password, poll) = (
-        settings.POP_HOST,
-        settings.POP_PORT,
-        settings.POP_SSL,
-        settings.POP_USER,
-        settings.POP_PASS,
-        settings.POP_POLL
-    )
-    pop_thread = PopFetcher(q, hostname, port, use_ssl, username, password, poll)
-    
-    threads = [pusher, pop_thread, imap_thread]
-    
-    logging.debug("Starting threads...")
-    for t in threads:
-        t.start()
+    pusher.start()
     
     try:
         while True:
-            
             time.sleep(1)
     except KeyboardInterrupt:
         pass
     
-    logging.debug("Stopping threads...")
-    for t in threads:
-        t.stop()
+    logging.debug("Telling fetcher to stop.")
+    fetcher.stop()
+    pusher.stop()
     
-    logging.debug("Waiting for threads...")
-    for t in threads:
-        t.join()
+    logging.debug("Waiting for fetcher to exit...")
+    fetcher.join()
+    logging.debug("Waiting for pusher to exit...")
+    pusher.join()
     logging.debug("Stopped.")
 
 if __name__ == "__main__":

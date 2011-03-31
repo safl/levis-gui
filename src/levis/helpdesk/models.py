@@ -57,7 +57,7 @@ class Ticket(models.Model):
         return str(self.number)
         
     class Meta:
-        ordering = ["-number"]
+        ordering = ["-number", "-created"]
 
 class Article(models.Model):
     

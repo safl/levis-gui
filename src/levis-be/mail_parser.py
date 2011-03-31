@@ -4,9 +4,19 @@ from helpdesk.models import Ticket, Priority, Queue, State
 from  django.contrib.auth.models import User
 import beanstalkc
 
+import threading
+import logging
 import pprint
 import email
 import time
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s,%(msecs)d %(levelname)s %(threadName)s %(message)s',
+    datefmt='%H:%M:%S'
+)
+
+from levis.backend.utils import Worker
 
 def main():
     
@@ -19,7 +29,7 @@ def main():
     
     while True:
         
-        print "Connecting to beanstalk..."
+        logging.debug("Connecting to beanstalk...")
         connected = False
         try:
             
@@ -33,35 +43,34 @@ def main():
             connected = True
             
         except Exception as details:
-            print "Error setting up beanstalk...", details
+            logging.debug("Beanstalk ERR: [%s]" % details)
         
-        print "Connected = ", connected
+        logging.debug("Connected? Answer = %s" % connected)
         while connected:
             
-            print "Grabbing job.."
+            logging.debug("Grabbing job..")
             try:
                 job = beanstalk.reserve()
-                msg = email.message_from_string(job.body)
-                for h, v in msg.items():
-                    print h,v
+                mail_raw = job.body
+                msg = email.message_from_string(mail_raw)
                 
                 t = Ticket()
-                t.number = int(time.time()/10000)
-                t.created = int(time.time())
-                t.owner = user
-                t.priority = priority
+                t.number    = int(time.time()/10000)
+                t.created   = int(time.time())
+                t.owner     = user
+                t.priority  = priority
                 t.queue = queue
                 t.state = state
-                t.title = msg.get('subject', "Hmm")
+                t.title = msg.get('Subject')
                 t.save()
                 
                 job.delete()
             except Exception as details:
-                print "Something went wrong!", details
+                logging.debug("Something went wrong! ERR: [%s]" % details)
                 connected = False
             
         if not connected:
-            print "Wait ten seconds then we try connecting to beanstalk again.."
+            logging.debug("Wait %d seconds then we try connecting to beanstalk again..")
             time.sleep(10)
     
 if __name__ == "__main__":

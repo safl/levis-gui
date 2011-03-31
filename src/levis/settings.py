@@ -78,7 +78,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'levis.urls'
 
 TEMPLATE_DIRS = (
-    "/home/safl/Desktop/levis/src/levis/templates"
+    "/home/safl/Desktop/levis/src/levis/templates/"
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

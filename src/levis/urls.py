@@ -6,7 +6,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     (r'^static/(?P<path>.*)$',
         'django.views.static.serve',
-        {'document_root': '/home/safl/Desktop/levis-gui/src/static'}
+        {'document_root': '/home/safl/Desktop/levis/src/static'}
     ),
     
     (r'', include('dashboard.urls')),

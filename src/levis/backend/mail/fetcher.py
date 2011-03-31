@@ -74,6 +74,7 @@ class Retriever(Worker):
     
     timeout = 10
     retry   = 10
+    counter = 0
     
     def __init__(self, q, hostname, port, use_ssl, username, password, poll):
         
@@ -85,7 +86,10 @@ class Retriever(Worker):
         self.password   = password
         self.poll       = poll
         
-        Worker.__init__(self)
+        thread_name = 'Retriever-%d' % Retriever.counter
+        Retriever.counter += 1
+        
+        Worker.__init__(self, name=thread_name)
             
 class PopRetriever(Retriever):
     
@@ -211,6 +215,7 @@ class ImapRetriever(Retriever):
 
 class MailFetcher(threading.Thread):
     
+    counter = 0
     types = {
         'POP3': PopRetriever,
         'IMAP': ImapRetriever
@@ -228,8 +233,10 @@ class MailFetcher(threading.Thread):
             self.retrievers.append(MailFetcher.types[type](
                 self.q, hostname, port, use_ssl, username, password, poll
             ))
-            
-        threading.Thread.__init__(self)
+        
+        thread_name = 'MailFetcher-%d' % MailFetcher.counter
+        MailFetcher.counter += 1
+        threading.Thread.__init__(self, name=thread_name)
     
     def run(self):
         

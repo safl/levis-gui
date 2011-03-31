@@ -75,10 +75,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'levis.urls'
+ROOT_URLCONF = 'levis.ui.urls'
 
 TEMPLATE_DIRS = (
-    "/home/safl/Desktop/levis-gui/src/levis/templates"
+    "/home/safl/Desktop/levis-gui/src/levis/ui/templates"
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -87,7 +87,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
-    "levis.context_processors.menu"
+    "levis.ui.context_processors.menu"
 )
 
 INSTALLED_APPS = (
@@ -98,13 +98,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     
-    'dashboard',
-    'organization',    
-    'helpdesk',    
-    'scheduling',
-    'accounting',
-    'reports',
-    'hact'
+    'levis.ui.dashboard',
+    'levis.ui.organization',    
+    'levis.ui.helpdesk',    
+    'levis.ui.scheduling',
+    'levis.ui.accounting',
+    'levis.ui.reports',
+    'levis.ui.hact'
     
 )
 

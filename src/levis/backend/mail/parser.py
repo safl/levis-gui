@@ -49,7 +49,7 @@ def main():
     parser = MailParser(
         settings.BEANSTALK_HOST,
         settings.BEANSTALK_PORT,
-        ['mail.in']        
+        ['helpdesk.mail.in']        
     )
     logging.debug('Starting parser...')
     parser.start()

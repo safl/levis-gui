@@ -29,9 +29,11 @@ class Worker(threading.Thread):
         while self.working:
             
             if self.paused:
+                logging.debug('I should pause...')
                 self.cv.acquire()
                 self.cv.wait()
                 self.cv.release()
+                logging.debug('Now i can work again!')
             else:            
                 self.work()
             
@@ -46,9 +48,11 @@ class Worker(threading.Thread):
     def pause(self):
         
         self.paused = True
+        logging.debug("Pausing worker...")
     
     def resume(self):
         
+        logging.debug("Resuming worker...")
         self.paused = False
         self.cv.acquire()
         self.cv.notify()
@@ -61,6 +65,7 @@ class Worker(threading.Thread):
 class BeanWorker(Worker):
     
     counter = 0
+    retry_timeout = 10  
     
     def __init__(self, hostname, port, tubes):
         
@@ -113,9 +118,9 @@ class BeanWorker(Worker):
                 logging.error("Something went wrong! ERR: [%s]" % details)
                 connected = False
                 
-            if not connected:
-                logging.debug("Wait %d seconds then we try connecting to beanstalk again..")
-                time.sleep(10)
+        if not connected:
+            logging.debug("Wait %d seconds then we try connecting to beanstalk again.." % BeanWorker.retry_timeout)
+            time.sleep(BeanWorker.retry_timeout)
                 
     def handle_job(self, job):
         return False

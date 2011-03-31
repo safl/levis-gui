@@ -3,24 +3,29 @@
 #
 #    MailFetcher,
 #
-#    Reads mail from one or more POP and/or IMAP servers queues them in memory
-#    as illustrated below:
+#    Reads mail from one or more POP and/or IMAP servers queues them in memory.
+#
+#    Nifty features:
+#
+#    - Throttling to avoid exhausting resources
+#    - Persistence of in-memory mails upon shutdown
+#
+#    Functionality is illustrated below:
 #
 #
-#    +--------------+                +--------+          +---------+
-#    | PopRetriever |-----+---put--->| Queue  |---get--->| Pusher  |
-#    +--------------+     |          +--------+          +--+------+
-#                         |                                 |
-#    +----------------+   |                                 |    +-----------+
-#    | ImapRetriever  |---+                                 +--->| BEANSTALK |
-#    +----------------+                                          +-----------+
-#
+#    +--------------+                +--------------+          +---------+
+#    | PopRetriever |-----+---put--->| MailFetcher  |---get--->| Pusher  |
+#    +--------------+     |          +-----+--------+          +--+------+
+#                         |                |                      |
+#    +----------------+   |                |                      |    +-----------+
+#    | ImapRetriever  |---+                +---persist--->        +--->| BEANSTALK |
+#    +----------------+                                                +-----------+
 #
 #    A mail is encapsulated as the tuple (account_id, mail) such that the
-#    origin of mail-blob can be identified.
+#    origin of a mail-blob can be identified.
 #
 #    When persisted to disk the mail-blob is identified by the filename:
-#    "<account_id>_<tmpfilename>"
+#    "<account_id>_<tmpfilename>.eml"
 #
 #    @author Simon A. F. Lund <safl@safl.dk>
 #
@@ -28,19 +33,11 @@
 #
 #    - POP3 http://www.faqs.org/rfcs/rfc1939.html
 #    - IMAP http://www.faqs.org/rfcs/rfc3501.html
-#  
+#    
 # TODO:
 #
-#   - Retrieve mails properly, assign id and check the return of retrieval
-#   - Persist mails from memory when terminating
-#   - Load persisted mails into memory when starting MailFetcher
-#   - Throttling to avoid flooding, based on pause-threshold and resume-threshold:
-#
-#       * Control the retrieval of mail by:
-#
-#           pausing:    mails in queue > pause-threshold
-#           resuming:   mails in queue < resume-threshold
-#                   
+#   - Remove persisted mail after load.
+#   - Lock mail-queue when shutting down.
 #   - Command-line options:
 #
 #       * log-file
@@ -49,12 +46,14 @@
 #       * pause-threshold
 #       * resume-threshold
 #
+from collections import deque
 import threading
+import tempfile
 import logging
 import imaplib
 import poplib
 import pprint
-import Queue
+import glob
 import time
 
 import beanstalkc
@@ -70,15 +69,21 @@ logging.basicConfig(
     datefmt='%H:%M:%S'
 )
 
+class Empty(Exception):
+    "Exception raised by MailFetcher.get()."
+    pass
+
 class Retriever(Worker):
     
     timeout = 10
     retry   = 10
     counter = 0
     
-    def __init__(self, q, hostname, port, use_ssl, username, password, poll):
+    def __init__(self, acct_id, put, hostname, port, use_ssl, username, password, poll):
         
-        self.q          = q
+        self.id = acct_id
+        
+        self.put        = put
         self.hostname   = hostname
         self.port       = port
         self.use_ssl    = use_ssl
@@ -129,7 +134,7 @@ class PopRetriever(Retriever):
                     
                     if response.startswith('+OK'):
                         msg = ''.join(lines)
-                        self.q.put(("ID", msg, len(msg)))
+                        self.put((self.id, msg, len(msg)))
                     else:
                         logging.error('RETR response did not start with "+OK"!')
                     
@@ -198,7 +203,7 @@ class ImapRetriever(Retriever):
                     typ, data = M.fetch(num, '(RFC822)')
                     logging.debug('Message %s\n' % (num))
                     msg = data[0][1]
-                    self.q.put(("ID", msg, len(msg)))
+                    self.put((self.id, msg, len(msg)))
                 
                 time.sleep(self.poll)
             except Exception as details:
@@ -221,17 +226,27 @@ class MailFetcher(threading.Thread):
         'IMAP': ImapRetriever
     }
     
-    def __init__(self, accounts):
+    def __init__(self, accounts, persist_dir=None, pause_threshold=104857600, resume_threshold=0):
         
         self.accounts   = accounts
         
-        self.q          = Queue.Queue()
+        self.mutex      = threading.Lock()
+        self.not_empty  = threading.Condition(self.mutex)
+        
+        self._mailq         = deque()
+        self._mailq_bytes   = 0        
+        
+        self.resume_threshold   = resume_threshold
+        self.pause_threshold    = pause_threshold
+        
+        self.paused =  False
         self.retrievers = []
-
-        for (type, hostname, port, use_ssl, username, password, poll) in accounts:
+        self.persist_dir = persist_dir
+        
+        for (type, acct_id, hostname, port, use_ssl, username, password, poll) in accounts:
             
             self.retrievers.append(MailFetcher.types[type](
-                self.q, hostname, port, use_ssl, username, password, poll
+                acct_id, self.put, hostname, port, use_ssl, username, password, poll
             ))
         
         thread_name = 'MailFetcher-%d' % MailFetcher.counter
@@ -239,14 +254,16 @@ class MailFetcher(threading.Thread):
         threading.Thread.__init__(self, name=thread_name)
     
     def run(self):
-        
-        # Load persisted mails from disk
+                
+        if self.persist_dir:            # Load persisted mails from disk
+            self.from_file()
+            
+            if self._mailq_bytes >= self.pause_threshold:    # Check threshold
+                self.pause()
         
         logging.debug("Starting retrievers...")
         for t in self.retrievers:
             t.start()
-        
-        # Todo: monitor queue
         
         for t in self.retrievers:
             t.join()
@@ -254,12 +271,14 @@ class MailFetcher(threading.Thread):
         logging.debug("Stopped.")
     
     def pause(self):
-    
+        
+        self.paused = True
         for t in self.retrievers:
             t.pause()
     
     def resume(self):
         
+        self.paused = False
         for t in self.retrievers:
             t.resume()
     
@@ -270,24 +289,105 @@ class MailFetcher(threading.Thread):
             
         for t in self.retrievers:
             t.join()
-            
-        # Remove any other readers of queue
-        # Persist any mails in queue
         
-    def get(self):
-        pass
+        # Remove any readers of the mail-queue
+        
+        if self.persist_dir:    # Persist mail-queue to filesystem
+            self.to_file()
     
-    def put(self):
-        pass
+    def put(self, item):
+        
+        self.not_empty.acquire()
+        try:
+            self._mailq.appendleft(item)
+            self._mailq_bytes += item[2]
+            logging.debug('Queue size: %d, items=%d.' % (self._mailq_bytes, len(self._mailq)))
+            
+            if self._mailq_bytes >= self.pause_threshold:    # Check threshold
+                self.pause()
+            
+            self.not_empty.notify()
+            
+        finally:
+            self.not_empty.release()
+    
+    def get(self, timeout=10.0):
+        
+        self.not_empty.acquire()
+        try:
+            if timeout < 0:
+                raise ValueError("'Timeout must be a positive number")
+            else:
+                endtime = time.time() + timeout
+                while not len(self._mailq):
+                    remaining = endtime - time.time()
+                    if remaining <= 0.0:
+                        raise Empty
+                    self.not_empty.wait(remaining)
+            
+            item = self._mailq.pop()
+            self._mailq_bytes -= item[2]
+            
+            if self._mailq_bytes <= self.resume_threshold:
+                self.resume()
+            
+            logging.debug('Queue size: %d' % self._mailq_bytes)
+            return item
+        finally:
+            self.not_empty.release()
+            
+    def to_file(self):
+        """
+        Persist the mail-queue to file-system.
+        
+        This could be implemented with simply pickling the deque, but by
+        using files it is much easier to manually fetch the persisted mails.
+        """
+        logging.info("About to persist %d mails of total %d bytes." % (len(self._mailq), self._mailq_bytes))
+        
+        for (acct_id, mail, bytes) in self._mailq:
+            try:
+                
+                with tempfile.NamedTemporaryFile(
+                    prefix  = "%s_" %(acct_id),
+                    suffix  = '.eml',
+                    dir     = self.persist_dir,
+                    delete  = False) as f:
+                    
+                    f.write(mail)
+                    
+            except Exception as details:
+                logging.error('Failed persisting mail from account "%s". ERR [%s]' % (acct_id, details))
+                
+    def from_file(self):
+        """
+        Load persisted mails from file-system into mail-queue.
+        """
+        
+        for fn in glob.glob(self.persist_dir+'*.eml'):
+            try:
+                
+                with open(fn, 'r') as fd:
+                    (acct_id, _) = fn.split('_', 1)
+                    mail    = fd.read()
+                    bytes   = len(mail)
+                    self._mailq.append((acct_id, mail, bytes))
+                    self._mailq_bytes += bytes
+                    
+            except Exception as details:
+                logging.error("Failed reading persisted mail identified by filename [%]. ERR: [%s]" % (fn, details))
+                
+        logging.info("Loaded %d mails from file-system of a total of %d bytes." % (len(self._mailq), self._mailq_bytes))
 
 class BeanPusher(Worker):
     """Send messages from local-queue to network-queue."""
     
     retry_to = 10   # Retry-timeout
     
-    def __init__(self, q, hostname, port, tube):
+    def __init__(self, get, put, hostname, port, tube):
         
-        self.q          = q
+        self.get        = get
+        self.put        = put
         self.hostname   = hostname
         self.port       = port
         self.tube       = tube
@@ -317,22 +417,23 @@ class BeanPusher(Worker):
             
             msg = None
             try:
-                (id, msg, msg_len) = self.q.get(timeout=10)
-            except Queue.Empty:
-                logging.debug("Nothing to push...")
+                msg = self.get(timeout=10.0)
+            except Empty:
+                logging.debug("Mail-queue is empty, nothing to push.")
+            except Exception as details:
+                logging.error("Error when requesting mail from fetcher. ERR: [%s]" % details)
             
             if msg:
                 logging.debug("Got message!")
                 try:
-                    beanstalk.put(msg) # serialize...
-                    self.q.task_done()
+                    beanstalk.put( msg[1] )       # Serialize...
                 except Exception as details:
-                    logging.debug("Error sending it... %s" % details)
-                    self.q.put(("ID", msg, msg_len))  # Put it back in for later processing when reconnected...
+                    logging.error("Beanstalk ERR: [%s]" % details)
+                    self.put( msg )
                     connected = False
         
         if not connected:
-            logging.debug("Try connecting again in %d seconds.." % BeanPusher.retry_to)
+            logging.debug("Re-connect attempt in %d seconds.." % BeanPusher.retry_to)
             time.sleep(BeanPusher.retry_to)
 
 def main():
@@ -341,6 +442,7 @@ def main():
     accounts = []
     accounts.append((
         "IMAP",
+        "id",
         settings.IMAP_HOST,
         settings.IMAP_PORT,
         settings.IMAP_SSL,
@@ -359,14 +461,15 @@ def main():
     #    settings.POP_POLL
     #))
     
-    fetcher = MailFetcher(accounts)
-    fetcher.start()
+    f = MailFetcher(accounts, '/tmp/')
+    f.start()
     
     pusher = BeanPusher(
-        fetcher.q,
+        f.get,
+        f.put,
         settings.BEANSTALK_HOST,
         settings.BEANSTALK_PORT,
-        'mail.in'
+        'helpdesk.mail.in'
     )
     pusher.start()
     
@@ -377,11 +480,11 @@ def main():
         pass
     
     logging.debug("Telling fetcher to stop.")
-    fetcher.stop()
+    f.stop()
     pusher.stop()
     
     logging.debug("Waiting for fetcher to exit...")
-    fetcher.join()
+    f.join()
     logging.debug("Waiting for pusher to exit...")
     pusher.join()
     logging.debug("Stopped.")

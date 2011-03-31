@@ -1,0 +1,16 @@
+[
+    {
+        "model": "services.mail_account_type",
+        "fields": {
+            "name": "POP3",
+            "description": "POP3 Account."
+        }
+    },
+    {
+        "model": "services.mail_account_type",
+        "fields": {
+            "name": "IMAP",
+            "description": "IMAP Account."
+        }
+    }    
+]
